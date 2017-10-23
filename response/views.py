@@ -88,9 +88,11 @@ def view_teacher_today(teacher):
 					"text": "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(name, rows[0], rows[1], rows[2], rows[3], rows[4], rows[5], rows[6])
 				}
 				})
+	else:
+		raise SyntaxError
 
 def late_night_message():
-	return ["왜 이 시간에 이걸..(허걱)", "1교시 아직인데..(훌쩍)", "쉬고싶다..(부르르)", "이 사람아 지금 이걸 왜 해!(박력)", "1교시는 아침 9시부터입니다..(졸려)", "...(깜짝)", "..(짜증)", "..나 잠 못자서 이래요(헉)"]
+	return ["왜 이 시간에 이걸..(허걱)", "1교시 아직인데..(훌쩍)", "쉬고싶다..(부르르)", "이 사람아 지금 이걸 왜 해!(박력)", "1교시는 아침 9시부터입니다..(졸려)", "...(깜짝)", "..(짜증)", "나 잠 못자서 이러케돼써요..(헉)"]
 
 # 1학년 1반(4교시):
 # 국어
@@ -147,26 +149,28 @@ def view_teacher_now(teacher):
 				}
 				})
 
-	dayOfWeekList = "월 화 수 목 금".split()
-	dayOfWeek = dayOfWeekList[now.weekday()] # eg. 월
+		dayOfWeekList = "월 화 수 목 금".split()
+		dayOfWeek = dayOfWeekList[now.weekday()] # eg. 월
 
-	row = TimeTable.objects.filter(teacher=teacher, weekday=dayOfWeek, start__lt=now).order_by("-period")[0]
-	period = row.period
-	teacher = row.teacher
-	name = "{}({}교시):".format(teacher, period)
-	teachingDivision = "{}학년 {}반".format(row.grade, row.division)
-	subject = row.subject
-	classroom = row.classroom
+		row = TimeTable.objects.filter(teacher=teacher, weekday=dayOfWeek, start__lt=now).order_by("-period")[0]
+		period = row.period
+		teacher = row.teacher
+		name = "{}({}교시):".format(teacher, period)
+		teachingDivision = "{}학년 {}반".format(row.grade, row.division)
+		subject = row.subject
+		classroom = row.classroom
 
-	if now.time() > row.end:
-		message = "지금은 수업중이 아닙니다.\n<최근 수업>"
-		name = "{}\n{}".format(message, name)
-	return JsonResponse(
-			{
-			"message": {
-				"text": "{}\n{}".format(name,teachingDivision)
-			}
-			})
+		if now.time() > row.end:
+			message = "지금은 수업중이 아닙니다.\n<최근 수업>"
+			name = "{}\n{}".format(message, name)
+		return JsonResponse(
+				{
+				"message": {
+					"text": "{}\n{}".format(name,teachingDivision)
+				}
+				})
+	else:
+		raise SyntaxError
 
 
 
