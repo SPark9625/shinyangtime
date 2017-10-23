@@ -25,11 +25,18 @@ def keyboard(request):
 		"buttons": ["도움말", "바로검색"]
 	})
 
+def late_night_message():
+	return ["왜 이 시간에 이걸..(허걱)", "1교시 아직인데..(훌쩍)", "쉬고싶다..(부르르)", "이 사람아 지금 이걸 왜 해!(박력)", "1교시는 아침 9시부터입니다..(졸려)", "...(깜짝)", "..(짜증)", "나 잠 못자서 이러케돼써요..(헉)"]
+
 def validate_teacher(teacher):
 	if teacher in TimeTable.TEACHER_LIST:
 		return True
 	else:
 		return False
+
+def weekday():
+	now = datetime.datetime.now()
+	return "월 화 수 목 금".split()[now.weekday()]
 
 # 1학년 1반(오늘):
 # 1교시 국어
@@ -40,9 +47,7 @@ def validate_teacher(teacher):
 # 6교시 체육
 # 7교시 -
 def view_class_today(grade, division):
-	now = datetime.datetime.now()
-	dayOfWeekList = "월 화 수 목 금 토 일".split()
-	dayOfWeek = dayOfWeekList[now.weekday()] # eg. 월
+	dayOfWeek = weekday()
 	periods = 7
 
 	rows = TimeTable.objects.filter(grade=grade, division=division, weekday=dayOfWeek).order_by("period")
@@ -52,7 +57,7 @@ def view_class_today(grade, division):
 			l.append("{}교시 {}".format(i+1, rows[i].subject))
 		except:
 			l.append("{}교시 -".format(i+1))
-	name = "{}학년 {}반({}요일):".format(grade, division, rows[0].weekday)
+	name = "{}학년 {}반({}요일):".format(grade, division, dayOfWeek)
 	return JsonResponse({
 		"message": {
 			"text": "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(name, l[0], l[1], l[2], l[3], l[4], l[5], l[6])
@@ -70,9 +75,7 @@ def view_class_today(grade, division):
 # 7교시 -
 def view_teacher_today(teacher):
 	if validate_teacher(teacher):
-		now = datetime.datetime.now()
-		dayOfWeekList = "월 화 수 목 금 토 일".split()
-		dayOfWeek = dayOfWeekList[now.weekday()]
+		dayOfWeek = weekday()
 		periods = 7
 		rows = list()
 		for i in range(periods):
@@ -81,7 +84,7 @@ def view_teacher_today(teacher):
 				rows.append("{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
 			except:
 				rows.append("{}교시 -".format(i+1))
-		name = "{}({}요일):".format(teacher, row.weekday)
+		name = "{}({}요일):".format(teacher, dayOfWeek)
 		return JsonResponse(
 				{
 				"message": {
@@ -91,8 +94,6 @@ def view_teacher_today(teacher):
 	else:
 		raise SyntaxError
 
-def late_night_message():
-	return ["왜 이 시간에 이걸..(허걱)", "1교시 아직인데..(훌쩍)", "쉬고싶다..(부르르)", "이 사람아 지금 이걸 왜 해!(박력)", "1교시는 아침 9시부터입니다..(졸려)", "...(깜짝)", "..(짜증)", "나 잠 못자서 이러케돼써요..(헉)"]
 
 # 1학년 1반(4교시):
 # 국어
@@ -111,8 +112,7 @@ def view_class_now(grade, division):
 			}
 			})
 
-	dayOfWeekList = "월 화 수 목 금 토 일".split()
-	dayOfWeek = dayOfWeekList[now.weekday()]
+	dayOfWeek = weekday()
 
 	row = TimeTable.objects.filter(grade=grade, division=division, weekday=dayOfWeek, start__lt=now).order_by("-period")[0]
 	period = row.period
@@ -149,9 +149,7 @@ def view_teacher_now(teacher):
 				}
 				})
 
-		dayOfWeekList = "월 화 수 목 금".split()
-		dayOfWeek = dayOfWeekList[now.weekday()] # eg. 월
-
+		dayOfWeek = weekday()
 		row = TimeTable.objects.filter(teacher=teacher, weekday=dayOfWeek, start__lt=now).order_by("-period")[0]
 		period = row.period
 		teacher = row.teacher
@@ -187,6 +185,8 @@ def answer(request):
 		input_request = request.body.decode("utf-8")
 		input_json = json.loads(input_request)
 		content = input_json["content"]
+		dayOfWeekList = "월 화 수 목 금".split()
+		dayOfWeek = dayOfWeekList[now.weekday()]
 
 	except:
 		return JsonResponse(
