@@ -64,11 +64,14 @@ def view_class_today(grade, division):
 # 6교시 -
 # 7교시 -
 def view_teacher_today(teacher):
+	now = datetime.datetime.now()
+	dayOfWeekList = "월 화 수 목 금 토 일".split()
+	dayOfWeek = dayOfWeekList[now.weekday()]
 	periods = 7
 	rows = list()
 	for i in range(periods):
 		try:
-			row = TimeTable.objects.get(teacher=teacher, period=(i+1))
+			row = TimeTable.objects.get(teacher=teacher, period=(i+1), weekday=dayOfWeek)
 			rows.append("{}교시 {}-{}".format(i+1, row.grade, row.division))
 		except:
 			rows.append("{}교시 -".format(i+1))
@@ -185,7 +188,7 @@ def answer(request):
 			}
 			})
 
-		elif content in ["검색","바로검색"]:
+		elif "검색" in content:
 			return JsonResponse(
 			{
 			"message": {
