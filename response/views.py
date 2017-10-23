@@ -173,7 +173,7 @@ def view_teacher_now(teacher):
 @csrf_exempt
 def answer(request):
 	now = datetime.datetime.now()
-	if now.isoweekday >= 6:
+	if now.isoweekday() >= 6:
 		return JsonResponse({
 			"message": {
 				"text": "주말엔 좀 쉬자..(허걱)"
