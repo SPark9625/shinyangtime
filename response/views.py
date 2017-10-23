@@ -72,7 +72,7 @@ def view_teacher_today(teacher):
 	for i in range(periods):
 		try:
 			row = TimeTable.objects.get(teacher=teacher, period=(i+1), weekday=dayOfWeek)
-			rows.append("{}교시 {}-{}".format(i+1, row.grade, row.division))
+			rows.append("{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
 		except:
 			rows.append("{}교시 -".format(i+1))
 	name = "{}({}요일):".format(teacher, row.weekday)
