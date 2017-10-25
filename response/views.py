@@ -56,14 +56,14 @@ today = weekday()
 def view_class_weekday(grade, division, weekday):
 	periods = 7
 
-	rows = TimeTable.objects.filter(grade=grade, division=division, weekday=today).order_by("period")
+	rows = TimeTable.objects.filter(grade=grade, division=division, weekday=weekday).order_by("period")
 	l = list()
 	for i in range(periods):
 		try:
 			l.append("{}교시 {}".format(i+1, rows[i].subject))
 		except:
 			l.append("{}교시 -".format(i+1))
-	name = "{}학년 {}반({}요일):".format(grade, division, today)
+	name = "{}학년 {}반({}요일):".format(grade, division, weekday)
 	return JsonResponse({
 		"message": {
 			"text": "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(name, l[0], l[1], l[2], l[3], l[4], l[5], l[6])
@@ -85,11 +85,11 @@ def view_teacher_weekday(teacher, weekday):
 		rows = list()
 		for i in range(periods):
 			try:
-				row = TimeTable.objects.get(teacher=teacher, period=(i+1), weekday=today)
+				row = TimeTable.objects.get(teacher=teacher, period=(i+1), weekday=weekday)
 				rows.append("{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
 			except:
 				rows.append("{}교시 -".format(i+1))
-		name = "{}({}요일):".format(teacher, today)
+		name = "{}({}요일):".format(teacher, weekday)
 		return JsonResponse(
 				{
 				"message": {
