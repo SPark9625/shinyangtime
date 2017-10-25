@@ -2,7 +2,6 @@ from django.contrib import admin
 from . import models
 
 class TimeTableAdmin(admin.ModelAdmin):
-	fields = "__all__"
 	fieldsets = [
 		(None, 				{"fields": ["default"]}),
 		("Year/Semester", 	{"fields": ["year", "semester"]}),
