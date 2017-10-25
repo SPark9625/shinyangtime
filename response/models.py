@@ -49,15 +49,16 @@ class TimeTable(models.Model):
 	LOCATION_LIST = ["---1층---", "시청각실", "농구장", "운동장", "---2층---", "기술가정실", "컴퓨터실", "과학실1", "강당", "우정반", "---3층---", "3-1", "3-2", "3-3", "도서실", "인사랑1", "인사랑2", "인사랑3", "---4층---", "2-1", "2-2", "2-3", "동아리실1", "동아리실2", "Wee 클래스", "과학실2", "English Studio", "---5층---", "1-1", "1-2", "미술실", "음악실", "수사랑1", "수사랑2", "역사랑", "진로상담실", "--알수없음--"]
 	CLASSROOM_CHOICES = zip(LOCATION_LIST, LOCATION_LIST)
 
-	unusual = models.BooleanField(verbose_name="특수케이스")
-	date = models.DateField(verbose_name="날짜", default="1996-02-25")
+	default = models.BooleanField(verbose_name="기본값", default=True)
+	year = models.PositiveSmallIntegerField(verbose_name="년도", default=2017)
+	semester = models.PositiveSmallIntegerField(verbose_name="학기", default=2)
+	date = models.DateField(null=True, blank=True)
 	weekday = models.CharField(max_length=30,choices=WEEKDAY_CHOICES, verbose_name="요일", default="월")
 	period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES, verbose_name="교시", default=1)
 	subject = models.CharField(max_length=30, choices=SUBJECT_CHOICES, verbose_name="과목")
 	teacher = models.CharField(max_length=30, verbose_name="선생님", choices=TEACHER_CHOICES)
 	grade = models.PositiveSmallIntegerField(choices=GRADE_CHOICES, verbose_name="학년", default=1)
 	division = models.PositiveSmallIntegerField(choices=DIVISION_CHOICES, verbose_name="반", default=1)
-	classroom = models.CharField(max_length=100, verbose_name="교실", choices=CLASSROOM_CHOICES, default="--알수없음--")
 	start = models.TimeField(verbose_name="시작시간", default="09:00")
 	end = models.TimeField(verbose_name="종료시간", default="09:01")
 
@@ -66,7 +67,7 @@ class TimeTable(models.Model):
 		return "{}요일 {}학년 {}반 {}교시 {}".format(self.weekday, self.grade, self.division, self.period, self.subject)
 
 # TimeTable.objects.create(
-# 	unusual=False,
+# 	default=False,
 # 	weekday="월",
 # 	period = 3,
 # 	subject = "수학",
