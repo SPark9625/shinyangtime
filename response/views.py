@@ -203,6 +203,13 @@ def answer(request):
 			}
 			})
 
+		elif content == "지금":
+			return JsonResponse(
+			{"message": {"text": now}})
+		elif content == "오늘":
+			return JsonResponse(
+			{"message": {"text": today + "요일"}})
+
 		elif "검색" in content:
 			return JsonResponse(
 			{
