@@ -58,14 +58,14 @@ class TimeTable(models.Model):
 	year = models.PositiveSmallIntegerField(verbose_name="년도", default=2017)
 	semester = models.PositiveSmallIntegerField(verbose_name="학기", choices=SEMESTER_CHOICES, default=2)
 	date = models.DateField(null=True, blank=True)
-	weekday = models.CharField(max_length=30,choices=WEEKDAY_CHOICES, verbose_name="요일", default="월")
+	weekday = models.CharField(max_length=30,choices=WEEKDAY_CHOICES, verbose_name="요일", blank=True)
 	period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES, verbose_name="교시", default=1)
 	subject = models.CharField(max_length=30, choices=SUBJECT_CHOICES, verbose_name="과목")
 	teacher = models.CharField(max_length=30, verbose_name="선생님", choices=TEACHER_CHOICES)
 	grade = models.PositiveSmallIntegerField(choices=GRADE_CHOICES, verbose_name="학년", default=1)
 	division = models.PositiveSmallIntegerField(choices=DIVISION_CHOICES, verbose_name="반", default=1)
-	start = models.TimeField(verbose_name="시작시간", default="09:00")
-	end = models.TimeField(verbose_name="종료시간", default="09:01")
+	start = models.TimeField(verbose_name="시작시간", null=True, blank=True)
+	end = models.TimeField(verbose_name="종료시간", null=True, blank=True)
 
 
 	def __str__(self):
