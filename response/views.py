@@ -1,40 +1,28 @@
+# 해야할 일:
+# 1. 시정표/시간표 변경 적용
+# 시정표 변경 인터페이스: 해당 요일 기본 시간표를 해당 날짜로 복사하는 함수. => 날짜를 입력하면 해당 날짜의 시정표가 준대로 변경.
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-
-import json
-import datetime
-import random
-
-from .models import TimeTable
-import os
-
-from timetable.settings import BASE_DIR
-
-now = datetime.datetime.now()
-def weekday(date=None):
-	if date == None:
-		date = now
-	return "월 화 수 목 금".split()[date.weekday()]
-today = weekday()
-
 def keyboard(request):
 	return JsonResponse({
 		"type": "buttons",
 		"buttons": ["도움말", "바로검색"]
 	})
 
-def late_night_message():
-	with open(os.path.join(BASE_DIR, "response/etc/late_night_message.txt")) as f:
-		ls = f.readlines()
-	return [line.strip() for line in ls]
+import os
+import json
+import datetime
+import random
 
-def validate_teacher(teacher):
-	if teacher in TimeTable.TEACHER_LIST:
-		return True
-	else:
-		return False
+from .models import TimeTable
+from .tools.timetablemod import Modifier
+from .tools.misc import weekday, late_night_message, validate_teacher
 
+from timetable.settings import BASE_DIR
+
+now = datetime.datetime.now()
+today = weekday()
 
 
 # 1학년 1반(오늘):
@@ -46,6 +34,7 @@ def validate_teacher(teacher):
 # 6교시 체육
 # 7교시 -
 def view_class_weekday(grade, division, weekday):
+	assert [grade, division] in [[1,1],[1,2],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
 	try:
 		periods = 7
 
@@ -75,25 +64,23 @@ def view_class_weekday(grade, division, weekday):
 # 6교시 -
 # 7교시 -
 def view_teacher_weekday(teacher, weekday):
-	if validate_teacher(teacher):
-		try:
-			assert len(TimeTable.objects.filter(teacher=teacher, weekday=weekday)) > 0
-		except:
-			return JsonResponse({
-			"message": {"text": "{}선생님은 오늘 수업이 없습니다.".format(teacher)}})
-		periods = 7
-		r = list()
-		for i in range(periods):
-			try:
-				row = TimeTable.objects.get(teacher=teacher, period=(i+1), weekday=weekday)
-				r.append("{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
-			except:
-				r.append("{}교시 -".format(i+1))
-		name = "{}({}요일):".format(teacher, weekday)
+	assert validate_teacher(teacher)
+	try:
+		assert len(TimeTable.objects.filter(teacher=teacher, weekday=weekday)) > 0
+	except:
 		return JsonResponse({
-				"message": {"text": ("{}\n"*7 + "{}").format(name,r[0],r[1],r[2],r[3],r[4],r[5],r[6])}})
-	else:
-		raise SyntaxError
+		"message": {"text": "{}선생님은 오늘 수업이 없습니다.".format(teacher)}})
+	periods = 7
+	r = list()
+	for i in range(periods):
+		try:
+			row = TimeTable.objects.get(teacher=teacher, period=(i+1), weekday=weekday)
+			r.append("{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
+		except:
+			r.append("{}교시 -".format(i+1))
+	name = "{}({}요일):".format(teacher, weekday)
+	return JsonResponse({
+			"message": {"text": ("{}\n"*7 + "{}").format(name,r[0],r[1],r[2],r[3],r[4],r[5],r[6])}})
 
 
 # 1학년 1반(4교시):
@@ -101,57 +88,62 @@ def view_teacher_weekday(teacher, weekday):
 # 선생님
 # 교실
 def view_class_now(grade, division, t=now):
-	if t.time() < datetime.time(9,00):
-		message = late_night_message()
+	assert [grade, division] in [[1,1],[1,2],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+	try:
+		if t.time() < datetime.time(9,00):
+			message = late_night_message()
+			return JsonResponse({
+				"message": {"text": message[random.randint(0, len(message)-1)]}})
+
+		row = TimeTable.objects.filter(grade=grade, division=division, weekday=today, start__lt=t).order_by("-period")[0]
+		period = row.period
+		name = "{}학년 {}반({}교시):".format(grade, division, period)
+
+		if t.time() > row.end:
+			message = "지금은 수업중이 아닙니다.\n<최근 수업>"
+			name = "{}\n{}".format(message, name)
 		return JsonResponse({
-			"message": {"text": message[random.randint(0, len(message)-1)]}})
+				"message": {"text": "{}\n{}\n{}".format(name,row.subject,row.teacher)}})
+	except:
+		return JsonResponse({
+				"message": {"text": "오늘은 수업이 없습니다."}})
 
-	row = TimeTable.objects.filter(grade=grade, division=division, weekday=today, start__lt=t).order_by("-period")[0]
-	period = row.period
-	name = "{}학년 {}반({}교시):".format(grade, division, period)
-
-	if t.time() > row.end:
-		message = "지금은 수업중이 아닙니다.\n<최근 수업>"
-		name = "{}\n{}".format(message, name)
-	return JsonResponse({
-			"message": {"text": "{}\n{}\n{}".format(name,row.subject,row.teacher)}})
 
 
 # 선생님(4교시):
 # 교실
 # 1학년 1반
 def view_teacher_now(teacher, t=now):
-	if validate_teacher(teacher):
-		if t.time() < datetime.time(9,00):
-			message = late_night_message()
-			if t.time() < datetime.time(6,00):
-				message.append("집에서 주무시고 계신데 왜요?(꺄아)")
-			return JsonResponse({
-				"message": {"text": message[random.randint(0, len(message)-1)]}})
-		try:
-			rows = TimeTable.objects.filter(teacher=teacher, weekday=today)
-			assert len(rows) > 0
-		except:
-			return JsonResponse({
-				"message": {"text": "{}선생님은 오늘 수업이 없습니다.".format(teacher)}})
-		else:
-			# 오늘 수업이 있긴 함
-			try:
-				row = rows.filter(start__lt=t).order_by("-period")[0]
-				name = "{}({}교시):".format(row.teacher, row.period)
-				teachingDivision = "{}학년 {}반 {}".format(row.grade, row.division, row.subject)
-
-				if t.time() > row.end:
-					message = "지금은 수업중이 아닙니다.\n<최근 수업>"
-					name = "{}\n{}".format(message, name)
-				return JsonResponse({
-					"message": {"text": "{}\n{}".format(name,teachingDivision)}})
-			except:
-				period = rows.order_by("period")[0].period
-				return JsonResponse({
-					"message": {"text": "오늘 {}선생님의 첫 수업은 {}교시부터입니다.".format(teacher, period)}})
+	assert validate_teacher(teacher)
+	if t.time() < datetime.time(9,00):
+		message = late_night_message()
+		if t.time() < datetime.time(6,00):
+			message.append("집에서 주무시고 계신데 왜요?(꺄아)")
+		return JsonResponse({
+			"message": {"text": message[random.randint(0, len(message)-1)]}})
+	try:
+		rows = TimeTable.objects.filter(teacher=teacher, weekday=today)
+		assert len(rows) > 0
+	except:
+		return JsonResponse({
+			"message": {"text": "{}선생님은 오늘 수업이 없습니다.".format(teacher)}})
 	else:
-		raise SyntaxError
+		# 오늘 수업이 있긴 함
+		try:
+			row = rows.filter(start__lt=t).order_by("-period")[0]
+			name = "{}({}교시):".format(row.teacher, row.period)
+			teachingDivision = "{}학년 {}반 {}".format(row.grade, row.division, row.subject)
+
+			if t.time() > row.end:
+				message = "지금은 수업중이 아닙니다.\n<최근 수업>"
+				name = "{}\n{}".format(message, name)
+			return JsonResponse({
+				"message": {"text": "{}\n{}".format(name,teachingDivision)}})
+		except:
+			period = rows.order_by("period")[0].period
+			return JsonResponse({
+				"message": {"text": "오늘 {}선생님의 첫 수업은 {}교시부터입니다.".format(teacher, period)}})
+
 
 def view_class(target, options):
 	grade, division = map(int, map(str.strip, target.split("-")))

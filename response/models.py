@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-from .period_to_time import Base, Custom
+from .tools.period_to_time import Base, Custom
 
 
 
@@ -50,7 +50,6 @@ def my_handler(sender, instance, **kwargs):
 	if instance.date:
 		instance.weekday = TimeTable.WEEKDAY_LIST[instance.date.weekday()]
 	if not (instance.start and instance.end):
-		instance.start = Base.start(instance)
-		instance.end = Base.end(instance)
+		instance.start, instance.end = Base.start_end(instance)
 
 
