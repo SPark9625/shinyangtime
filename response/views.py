@@ -36,12 +36,13 @@ def validate_teacher(teacher):
 	else:
 		return False
 
+now = datetime.datetime.now()
+
 def weekday(date=None):
 	if date == None:
 		date = now
 	return "월 화 수 목 금".split()[date.weekday()]
 
-now = datetime.datetime.now()
 today = weekday()
 
 # 1학년 1반(오늘):
@@ -183,7 +184,6 @@ def answer(request):
 		input_request = request.body.decode("utf-8")
 		input_json = json.loads(input_request)
 		content = input_json["content"]
-		weekday = weekday()
 
 	except:
 		return JsonResponse(
