@@ -35,6 +35,8 @@ def end(s):
 		return "16:05"
 
 class TimeTable(models.Model):
+	SEMESTER_CHOICES = zip([1,2],[1,2])
+
 	WEEKDAY_LIST = ["월", "화", "수", "목", "금"]
 	WEEKDAY_CHOICES = zip(WEEKDAY_LIST, WEEKDAY_LIST)
 	SUBJECT_LIST = sorted(["국어","수학","영어","사회","과학","역사","도덕","철학","체육","기술가정","주제","미술","창체","동아", "음악", "진로", "예체", "스포츠", "한문"])
@@ -51,7 +53,7 @@ class TimeTable(models.Model):
 
 	default = models.BooleanField(verbose_name="기본값", default=True)
 	year = models.PositiveSmallIntegerField(verbose_name="년도", default=2017)
-	semester = models.PositiveSmallIntegerField(verbose_name="학기", default=2)
+	semester = models.PositiveSmallIntegerField(verbose_name="학기", choices=SEMESTER_CHOICES, default=2)
 	date = models.DateField(null=True, blank=True)
 	weekday = models.CharField(max_length=30,choices=WEEKDAY_CHOICES, verbose_name="요일", default="월")
 	period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES, verbose_name="교시", default=1)
