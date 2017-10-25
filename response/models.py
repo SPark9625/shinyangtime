@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 def start(s):
 	if s.period == 1:
@@ -33,6 +35,7 @@ def end(s):
 		return "15:10"
 	elif s.period == 7:
 		return "16:05"
+
 
 class TimeTable(models.Model):
 	SEMESTER_CHOICES = zip([1,2],[1,2])
@@ -68,20 +71,17 @@ class TimeTable(models.Model):
 	def __str__(self):
 		return "{}요일 {}학년 {}반 {}교시 {}".format(self.weekday, self.grade, self.division, self.period, self.subject)
 
-# TimeTable.objects.create(
-# 	default=False,
-# 	weekday="월",
-# 	period = 3,
-# 	subject = "수학",
-# 	teacher = "장현선",
-# 	grade = 1,
-# 	division = 1
-# 	)
 
 
 
 
 
-
+@receiver(pre_save, sender=TimeTable)
+def my_handler(sender, instance, **kwargs):
+	if instance.date:
+		instance.weekday = instance.date.weekday()
+	if instance.period:
+		instance.start = start(instance)
+		instance.end = end(instance)
 
 
