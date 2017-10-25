@@ -4,41 +4,13 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-def start(s):
-	if s.period == 1:
-		return "09:15"
-	elif s.period == 2:
-		return "10:10"
-	elif s.period == 3:
-		return "11:05"
-	elif s.period == 4:
-		return "12:00"
-	elif s.period == 5:
-		return "13:30"
-	elif s.period == 6:
-		return "14:25"
-	elif s.period == 7:
-		return "15:20"
+from .period_to_time import Base, Custom
 
-def end(s):
-	if s.period == 1:
-		return "10:00"
-	elif s.period == 2:
-		return "10:55"
-	elif s.period == 3:
-		return "11:50"
-	elif s.period == 4:
-		return "12:45"
-	elif s.period == 5:
-		return "14:15"
-	elif s.period == 6:
-		return "15:10"
-	elif s.period == 7:
-		return "16:05"
+
 
 
 class TimeTable(models.Model):
-	SEMESTER_CHOICES = zip([1,2],[1,2])
+	SEMESTER_CHOICES = zip([1,2],["봄","가을"])
 
 	WEEKDAY_LIST = ["월", "화", "수", "목", "금"]
 	WEEKDAY_CHOICES = zip(WEEKDAY_LIST, WEEKDAY_LIST)
@@ -57,7 +29,7 @@ class TimeTable(models.Model):
 	default = models.BooleanField(verbose_name="기본값", default=False)
 	year = models.PositiveSmallIntegerField(verbose_name="년도", default=2017)
 	semester = models.PositiveSmallIntegerField(verbose_name="학기", choices=SEMESTER_CHOICES, default=2)
-	date = models.DateField(null=True, blank=True)
+	date = models.DateField()
 	weekday = models.CharField(max_length=30,choices=WEEKDAY_CHOICES, verbose_name="요일", blank=True)
 	period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES, verbose_name="교시", default=1)
 	subject = models.CharField(max_length=30, choices=SUBJECT_CHOICES, verbose_name="과목")
@@ -73,15 +45,12 @@ class TimeTable(models.Model):
 
 
 
-
-
-
 @receiver(pre_save, sender=TimeTable)
 def my_handler(sender, instance, **kwargs):
 	if instance.date:
 		instance.weekday = TimeTable.WEEKDAY_LIST[instance.date.weekday()]
-	if instance.period:
-		instance.start = start(instance)
-		instance.end = end(instance)
+	if not (instance.start and instance.end):
+		instance.start = Base.start(instance)
+		instance.end = Base.end(instance)
 
 
