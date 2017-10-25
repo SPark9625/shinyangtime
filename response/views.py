@@ -53,7 +53,7 @@ today = weekday()
 # 5교시 역사
 # 6교시 체육
 # 7교시 -
-def view_class_weekday(grade, division, weekday=today):
+def view_class_weekday(grade, division, weekday):
 	periods = 7
 
 	rows = TimeTable.objects.filter(grade=grade, division=division, weekday=today).order_by("period")
@@ -79,7 +79,7 @@ def view_class_weekday(grade, division, weekday=today):
 # 5교시 2-3
 # 6교시 -
 # 7교시 -
-def view_teacher_weekday(teacher, weekday=today):
+def view_teacher_weekday(teacher, weekday):
 	if validate_teacher(teacher):
 		periods = 7
 		rows = list()
@@ -121,7 +121,6 @@ def view_class_now(grade, division):
 	name = "{}학년 {}반({}교시):".format(grade, division, period)
 	teacher = row.teacher
 	subject = row.subject
-	classroom = row.classroom
 
 	if now.time() > row.end:
 		message = "지금은 수업중이 아닙니다.\n<최근 수업>"
@@ -156,7 +155,6 @@ def view_teacher_now(teacher):
 		name = "{}({}교시):".format(teacher, period)
 		teachingDivision = "{}학년 {}반".format(row.grade, row.division)
 		subject = row.subject
-		classroom = row.classroom
 
 		if now.time() > row.end:
 			message = "지금은 수업중이 아닙니다.\n<최근 수업>"
@@ -171,143 +169,84 @@ def view_teacher_now(teacher):
 		raise SyntaxError
 
 
+def view_class(target, options):
+	grade, division = map(int, map(str.strip, target.split("-")))
+	try:
+		if options["now"]:
+			return view_class_now(grade, division)
+		else:
+			return view_class_weekday(grade, division, options["weekday"])
+	except:
+		return JsonResponse({
+			"message": {"text": "학년과 반이 올바르지 않습니다."}})
+
+def view_teacher(target, options):
+	try:
+		if options["now"]:
+			return view_teacher_now(target)
+		else:
+			return view_teacher_weekday(target, options["weekday"])
+	except:
+		return JsonResponse({
+			"message": {"text": "이름을 다시 한 번 확인하십시오."}})
+
 
 @csrf_exempt
 def answer(request):
 	if now.weekday() >= 5:
 		return JsonResponse({
-			"message": {
-				"text": "주말엔 좀 쉬자..(허걱)"
-			}
-			})
+			"message": {"text": "주말엔 좀 쉬자..(허걱)"}})
 	try:
 		input_request = request.body.decode("utf-8")
 		input_json = json.loads(input_request)
 		content = input_json["content"]
 
 	except:
-		return JsonResponse(
-			{
-			"message": {
-				"text": "Wrong input. 잘못된 접근입니다."
-			}
-			})
+		return JsonResponse({
+			"message": {"text": "Wrong input. 잘못된 접근입니다."}})
 	else:
 		if content == "도움말":
 			with open(os.path.join(BASE_DIR, "response/helper.txt")) as f:
 				helper = f.read()
-			return JsonResponse(
-			{
-			"message": {
-				"text": helper
-			}
-			})
-
+			return JsonResponse({
+				"message": {"text": helper}})
 		elif content == "지금":
-			return JsonResponse(
-			{"message": {"text": now}})
+			return JsonResponse({
+				"message": {"text": now}})
 		elif content == "오늘":
-			return JsonResponse(
-			{"message": {"text": today + "요일"}})
-
+			return JsonResponse({
+				"message": {"text": today + "요일"}})
 		elif "검색" in content:
-			return JsonResponse(
-			{
-			"message": {
-				"text": "키보드 작동중"
-			}
-			})
+			return JsonResponse({
+				"message": {"text": "키보드 작동중"}})
 
 		else:
 			# determine if an option exists
 			try:
 				contents = content.strip().split()
 				assert len(contents) == 2 and contents[1] in  "지금 월 화 수 목 금".split()
+				target = contents[0]
 				if contents[1] == "지금":
-					target = contents[0]
 					if len(target.split("-")) > 1:
-						# searching for class now
-						# make sure the input is alright
-						try:
-							grade, division = map(int, map(str.strip, target.split("-")))
-							return view_class_now(grade, division)
-						except:
-							return JsonResponse(
-							{
-							"message": {
-								"text": "학년과 반이 올바르지 않습니다."
-							}
-							})
+						return view_class(target, {"now": True})
 					else:
-						# searching for teacher now
-						try:
-							return view_teacher_now(target)
-						except:
-							return JsonResponse(
-							{
-							"message": {
-								"text": "이름을 다시 한 번 확인하십시오."
-							}
-							})
+						# searching for teacher "now"
+						return view_teacher(target, {"now": True})
 				# searching for weekday
 				else:
-					target = contents[0]
 					if len(target.split("-")) > 1:
-						# searching for class weekday
-						# make sure the input is alright
-						try:
-							grade, division = map(int, map(str.strip, target.split("-")))
-							return view_class_weekday(grade, division, contents[1])
-						except:
-							return JsonResponse(
-							{
-							"message": {
-								"text": "학년과 반이 올바르지 않습니다."
-							}
-							})
+						return view_class(target, {"now": False, "weekday": contents[1]})
 					else:
 						# searching for teacher weekday
-						try:
-							return view_teacher_weekday(target, contents[1])
-						except:
-							return JsonResponse(
-							{
-							"message": {
-								"text": "이름을 다시 한 번 확인하십시오."
-							}
-							})
+						return view_teacher(target, {"now": False, "weekday": contents[1]})
 
-
-
-			# there's no "지금"
+			# there's no option
 			except:
-				if len(content.split("-")) > 1:
-					# searching for class now
-					# make sure the input is alright
-					try:
-						grade, division = content.split("-")
-						grade, division = int(grade.strip()), int(division.strip())
-						assert grade <= 3 and division <= 3
-						return view_class_weekday(grade, division)
-					except:
-						return JsonResponse(
-						{
-						"message": {
-							"text": "학년과 반이 올바르지 않습니다."
-						}
-						})
+				target = content.strip()
+				if len(target.split("-")) > 1:
+					return view_class(target, {"now": False, "weekday": today})
 				else:
-					# searching for teacher now
-					teacher = content.strip()
-					try:
-						return view_teacher_weekday(teacher)
-					except:
-						return JsonResponse(
-						{
-						"message": {
-							"text": "이름을 다시 한 번 확인하십시오."
-						}
-						})
+					return view_teacher(target, {"now": False, "weekday": today})
 
 
 
