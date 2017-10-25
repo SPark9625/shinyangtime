@@ -1,4 +1,4 @@
-class Base(object):
+class Base:
 	def start(instance):
 		if instance.period == 1:
 			return "09:15"
@@ -31,7 +31,7 @@ class Base(object):
 		elif instance.period == 7:
 			return "16:05"
 
-class Custom(object):
+class Custom:
 	def start_2017_Fall_13(instance):
 	if instance.period == 1:
 		return "10:00"
