@@ -79,7 +79,7 @@ class TimeTable(models.Model):
 @receiver(pre_save, sender=TimeTable)
 def my_handler(sender, instance, **kwargs):
 	if instance.date:
-		instance.weekday = instance.date.weekday()
+		instance.weekday = TimeTable.WEEKDAY_LIST[instance.date.weekday()]
 	if instance.period:
 		instance.start = start(instance)
 		instance.end = end(instance)
