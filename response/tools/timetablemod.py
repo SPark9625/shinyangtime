@@ -82,4 +82,5 @@ class Modifier:
 			targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
 			for target in targets:
 				target.start, target.end = func(target)
+				target.save()
 				print(target, target.start, target.end)
