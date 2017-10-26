@@ -2,6 +2,7 @@ from ..models import TimeTable
 from .misc import weekday
 from .period_to_time import Custom
 from shinyang import SHINYANG, this_year, this_semester
+import datetime
 
 
 def base_cell_copy(grade, division, date, period):
