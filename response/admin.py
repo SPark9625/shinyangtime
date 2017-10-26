@@ -2,7 +2,7 @@ from django.contrib import admin
 from . import models
 
 class TimeTableAdmin(admin.ModelAdmin):
-	pass
+	list_filter = ["year","semester","date","grade","division"]
 	# fieldsets = [
 	# 	# (None, 				{"fields": ["default"]}),
 	# 	# ("Year/Semester", 	{"fields": ["year", "semester"]}),

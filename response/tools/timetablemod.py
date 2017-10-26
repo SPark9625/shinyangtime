@@ -1,8 +1,22 @@
 from ..models import TimeTable
 from .misc import weekday
-from .period_to_time import Custom
+from .period_to_time import Base, Custom
 from shinyang import SHINYANG, this_year, this_semester
 import datetime
+
+def refresh(query):
+	"""refreshes to new state"""
+	for row in query:
+		row.year = row.date.year
+		if row.date.month < 8:
+			row.semester = 1
+		else:
+			row.semester = 2
+		row.weekday = weekday(row.date)
+		row.start, row.end = Base.start_end(row)
+		row.save()
+		print(row)
+
 
 
 def base_cell_copy(grade, division, date, period):
@@ -58,7 +72,7 @@ def base_day_copy_z(date):
 
 
 class Modifier:
-	def change(grade, division, cell1, cell2):
+	def interchange(grade, division, cell1, cell2):
 		"""cells are dictionaries containing the following keys: date, period"""
 		# dates
 		wd1 = weekday(cell1["date"])
@@ -110,12 +124,13 @@ class Modifier:
 			wd = weekday(date)
 			existing_rows = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
 			existing_periods = list()
-			base_rows = len(TimeTable.objects.filter(default=True, weekday=wd, grade=grade, division=division))
+			base_periods = SHINYANG["2017"]["2"]["PERIODS"][wd]
 			for row in existing_rows:
 				existing_periods.append(row.period)
-			for i in range(base_rows):
+			for i in range(base_periods):
 				if i+1 not in existing_periods:
 					base_cell_copy(grade, division, date, i+1)
+
 			targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
 			for target in targets:
 				target.start, target.end = func(target)
