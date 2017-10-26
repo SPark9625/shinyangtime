@@ -6,22 +6,22 @@ from grade_division import GRADE_DIVISION
 year = 2017
 semester = 2
 
-class Modifier:
-	def base_copy(grade, division, date, period):
-		t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=weekday, period=period)
-		new = TimeTable.objects.create(
-			default = False,
-			year = year,
-			semester = semester,
-			date = date,
-			period = period,
-			subject = t.subject,
-			teacher = t.teacher,
-			grade = grade,
-			division = division
-		)
-		print(new)
+def base_copy(grade, division, date, period):
+	t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=weekday, period=period)
+	new = TimeTable.objects.create(
+		default = False,
+		year = year,
+		semester = semester,
+		date = date,
+		period = period,
+		subject = t.subject,
+		teacher = t.teacher,
+		grade = grade,
+		division = division
+	)
+	print(new)
 
+class Modifier:
 	def change(grade, division, cell1, cell2):
 		"""cells are dictionaries containing the following keys: date, period"""
 		# dates
@@ -77,7 +77,7 @@ class Modifier:
 				existing_periods.append(row.period)
 			for i in range(base_rows):
 				if i+1 not in existing_periods:
-					self.base_copy(grade, division, date, i+1)
+					base_copy(grade, division, date, i+1)
 			targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
 			for target in targets:
 				target.start, target.end = Custom.func(target)
