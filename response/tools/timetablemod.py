@@ -81,5 +81,5 @@ class Modifier:
 					base_copy(grade, division, date, i+1)
 			targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
 			for target in targets:
-				target.start, target.end = Custom.func(target)
+				target.start, target.end = func(target)
 				print(target, target.start, target.end)
