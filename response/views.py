@@ -38,7 +38,7 @@ def view_class_weekday(grade, division, date):
 		l = list()
 		for i in range(len(rows)):
 			l.append("\n{}교시 {}".format(rows[i].period, rows[i].subject))
-		name = "{}학년 {}반\n{}-{}({}요일):".format(grade, division, date.month, date.day wd)
+		name = "{}학년 {}반\n{}-{}({}요일):".format(grade, division, date.month, date.day, wd)
 		message = ""
 		for r in l:
 			message += r

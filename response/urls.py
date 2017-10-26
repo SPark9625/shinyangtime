@@ -1,5 +1,5 @@
 from django.conf.urls import url
-import views
+import response.views
 
 app_name = "response"
 urlpatterns = [
