@@ -1,6 +1,7 @@
 from ..models import TimeTable
 from .misc import weekday
 from .period_to_time import Custom
+from grade_division import GRADE_DIVISION
 
 year = 2017
 semester = 2
@@ -61,20 +62,23 @@ class Modifier:
 		print(new1)
 		print(new2)
 
-	def date_time_mod(grade, division, date, func):
+	def date_time_mod(date, func):
 		# 1. 이미 존재하는 셀들 전부 가져옴.
 		# 2. 1번의 셀들 제외하고 전부 베이스에서 복붙
 		# 3. 그 날짜 전체 시간 조정.
-		wd = weekday(date)
-		existing_rows = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
-		existing_periods = list()
-		base_rows = len(TimeTable.objects.filter(default=True, weekday=wd, grade=grade, division=division))
-		for row in existing_rows:
-			existing_periods.append(row.period)
-		for i in range(base_rows):
-			if i+1 not in existing_periods:
-				base_copy(grade, division, date, i+1)
-		targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
-		for target in targets:
-			target.start, target.end = Custom.start_end_2017_10_27(target)
-			print(target, target.start, target.end)
+		for gd in GRADE_DIVISION:
+			grade = gd[0]
+			division = gd[1]
+			wd = weekday(date)
+			existing_rows = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
+			existing_periods = list()
+			base_rows = len(TimeTable.objects.filter(default=True, weekday=wd, grade=grade, division=division))
+			for row in existing_rows:
+				existing_periods.append(row.period)
+			for i in range(base_rows):
+				if i+1 not in existing_periods:
+					self.base_copy(grade, division, date, i+1)
+			targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
+			for target in targets:
+				target.start, target.end = Custom.func(target)
+				print(target, target.start, target.end)

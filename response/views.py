@@ -20,6 +20,7 @@ from .tools.timetablemod import Modifier
 from .tools.misc import weekday, late_night_message, validate_teacher
 
 from timetable.settings import BASE_DIR
+from grade_division import GRADE_DIVISION
 
 now = datetime.datetime.now()
 today = weekday()
@@ -34,7 +35,7 @@ today = weekday()
 # 6교시 체육
 # 7교시 -
 def view_class_weekday(grade, division, weekday):
-	assert [grade, division] in [[1,1],[1,2],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+	assert (grade, division) in GRADE_DIVISION
 	try:
 		periods = 7
 
@@ -88,7 +89,7 @@ def view_teacher_weekday(teacher, weekday):
 # 선생님
 # 교실
 def view_class_now(grade, division, t=now):
-	assert [grade, division] in [[1,1],[1,2],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+	assert (grade, division) in GRADE_DIVISION
 	try:
 		if t.time() < datetime.time(9,00):
 			message = late_night_message()
