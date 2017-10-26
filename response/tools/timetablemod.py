@@ -7,6 +7,8 @@ year = 2017
 semester = 2
 
 def base_copy(grade, division, date, period):
+	if isinstance(date, str):
+		date = datetime.datetime.strptime(date, "%Y-%m-%d")
 	wd = weekday(date)
 	t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=wd, period=period)
 	new = TimeTable.objects.create(
@@ -67,6 +69,8 @@ class Modifier:
 		# 1. 이미 존재하는 셀들 전부 가져옴.
 		# 2. 1번의 셀들 제외하고 전부 베이스에서 복붙
 		# 3. 그 날짜 전체 시간 조정.
+		if isinstance(date, str):
+			date = datetime.datetime.strptime(date, "%Y-%m-%d")
 		for gd in GRADE_DIVISION:
 			grade = gd[0]
 			division = gd[1]
