@@ -27,30 +27,28 @@ today = weekday()
 
 message_no_class_now = "지금은 수업중이 아닙니다.\n<최근 수업>"
 message_no_class_today = "오늘은 수업이 없습니다."
-# 1학년 1반(오늘):
+# 1학년 1반(화):
 # 1교시 국어
 # 2교시 수학
 # 3교시 사회
 # 4교시 영어
 # 5교시 역사
 # 6교시 체육
-# 7교시 -
-def view_class_weekday(grade, division, weekday):
+def view_class_weekday(grade, division, date):
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
-		periods = 7
-
-		rows = TimeTable.objects.filter(grade=grade, division=division, weekday=weekday).order_by("period")
+		wd = weekday(date)
+		rows = TimeTable.objects.filter(grade=grade, division=division, date=date).order_by("period")
 		assert len(rows) > 0
 		l = list()
-		for i in range(periods):
-			try:
-				l.append("{}교시 {}".format(i+1, rows[i].subject))
-			except:
-				l.append("{}교시 -".format(i+1))
-		name = "{}학년 {}반({}요일):".format(grade, division, weekday)
+		for i in range(len(rows)):
+			l.append("{}교시 {}".format(rows[i].period, rows[i].subject))
+		name = "\n{}학년 {}반({}요일):".format(grade, division, wd)
+		message = ""
+		for r in l:
+			message += r
 		return JsonResponse({
-			"message": {"text": ("{}\n"*7 + "{}").format(name, l[0], l[1], l[2], l[3], l[4], l[5], l[6])}})
+			"message": {"text": "{}\n{}".format(name, message)}})
 	except:
 		return JsonResponse({
 			"message": {"text": message_no_class_today}})
