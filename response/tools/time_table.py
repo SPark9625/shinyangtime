@@ -35,6 +35,7 @@ def base_cell_copy(grade, division, date, period):
 		t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=wd, period=period)
 		new = TimeTable.objects.create(
 			default = False,
+			modified = False,
 			year = this_year,
 			semester = this_semester,
 			date = date,
@@ -91,6 +92,7 @@ class Modifier:
 
 		new1 = TimeTable.objects.create(
 			default = False,
+			modified = True,
 			year = this_year,
 			semester = this_semester,
 			date = cell2["date"],
@@ -102,6 +104,7 @@ class Modifier:
 		)
 		new2 = TimeTable.objects.create(
 			default = False,
+			modified = True,
 			year = this_year,
 			semester = this_semester,
 			date = cell1["date"],

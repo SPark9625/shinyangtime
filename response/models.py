@@ -27,7 +27,7 @@ class TimeTable(models.Model):
 	CLASSROOM_CHOICES = zip(LOCATION_LIST, LOCATION_LIST)
 
 	default = models.BooleanField(verbose_name="기본값", default=False)
-	modified = models.BooleanField(verbose_name="변경사항", default=False)
+	modified = models.BooleanField(verbose_name="변경사항", default=True)
 	year = models.PositiveSmallIntegerField(verbose_name="년도", blank=True, null=True)
 	semester = models.PositiveSmallIntegerField(verbose_name="학기", choices=SEMESTER_CHOICES, null=True, blank=True)
 	date = models.DateField()
