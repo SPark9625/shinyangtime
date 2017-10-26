@@ -20,12 +20,13 @@ from .tools.timetablemod import Modifier
 from .tools.misc import weekday, late_night_message, validate_teacher
 
 from timetable.settings import BASE_DIR
-from grade_division import GRADE_DIVISION
+from shinyang import SHINYANG, this_year, this_semester
 
 now = datetime.datetime.now()
 today = weekday()
 
-
+message_no_class_now = "지금은 수업중이 아닙니다.\n<최근 수업>"
+message_no_class_today = "오늘은 수업이 없습니다."
 # 1학년 1반(오늘):
 # 1교시 국어
 # 2교시 수학
@@ -35,7 +36,7 @@ today = weekday()
 # 6교시 체육
 # 7교시 -
 def view_class_weekday(grade, division, weekday):
-	assert (grade, division) in GRADE_DIVISION
+	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
 		periods = 7
 
@@ -52,7 +53,7 @@ def view_class_weekday(grade, division, weekday):
 			"message": {"text": ("{}\n"*7 + "{}").format(name, l[0], l[1], l[2], l[3], l[4], l[5], l[6])}})
 	except:
 		return JsonResponse({
-			"message": {"text": "오늘은 수업이 없습니다."}})
+			"message": {"text": message_no_class_today}})
 
 
 
@@ -89,7 +90,7 @@ def view_teacher_weekday(teacher, weekday):
 # 선생님
 # 교실
 def view_class_now(grade, division, t=now):
-	assert (grade, division) in GRADE_DIVISION
+	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
 		if t.time() < datetime.time(9,00):
 			message = late_night_message()
@@ -101,7 +102,7 @@ def view_class_now(grade, division, t=now):
 		name = "{}학년 {}반({}교시):".format(grade, division, period)
 
 		if t.time() > row.end:
-			message = "지금은 수업중이 아닙니다.\n<최근 수업>"
+			message = message_no_class_now
 			name = "{}\n{}".format(message, name)
 		return JsonResponse({
 				"message": {"text": "{}\n{}\n{}".format(name,row.subject,row.teacher)}})
@@ -136,7 +137,7 @@ def view_teacher_now(teacher, t=now):
 			teachingDivision = "{}학년 {}반 {}".format(row.grade, row.division, row.subject)
 
 			if t.time() > row.end:
-				message = "지금은 수업중이 아닙니다.\n<최근 수업>"
+				message = message_no_class_now
 				name = "{}\n{}".format(message, name)
 			return JsonResponse({
 				"message": {"text": "{}\n{}".format(name,teachingDivision)}})
@@ -180,7 +181,7 @@ def answer(request):
 
 	except:
 		return JsonResponse({
-			"message": {"text": "Wrong input. 잘못된 접근입니다."}})
+			"message": {"text": "Wrong path. 잘못된 접근입니다."}})
 	else:
 		if content == "도움말":
 			with open(os.path.join(BASE_DIR, "response/etc/helper.txt")) as f:

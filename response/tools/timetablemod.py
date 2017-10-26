@@ -1,28 +1,54 @@
 from ..models import TimeTable
 from .misc import weekday
 from .period_to_time import Custom
-from grade_division import GRADE_DIVISION
+from shinyang import SHINYANG, this_year, this_semester
 
-year = 2017
-semester = 2
 
-def base_copy(grade, division, date, period):
-	if isinstance(date, str):
-		date = datetime.datetime.strptime(date, "%Y-%m-%d")
+def base_cell_copy(grade, division, date, period):
+	"""input: grade, division, date, period
+	Creates a new cell at the given date and prints it.
+	Doesn't return anything"""
+	try:
+		t = TimeTable.objects.get(default=False, grade=grade, division=division, date=date, period=period)
+		print(t, "overwrite not possible.")
+	except:
+		if isinstance(date, str):
+			date = datetime.datetime.strptime(date, "%Y-%m-%d")
+		wd = weekday(date)
+		t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=wd, period=period)
+		new = TimeTable.objects.create(
+			default = False,
+			year = this_year,
+			semester = this_semester,
+			date = date,
+			period = period,
+			subject = t.subject,
+			teacher = t.teacher,
+			grade = grade,
+			division = division
+		)
+		print(new)
+
+def base_day_copy(grade, division, date):
+	"""input: grade, division, date"""
 	wd = weekday(date)
-	t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=wd, period=period)
-	new = TimeTable.objects.create(
-		default = False,
-		year = year,
-		semester = semester,
-		date = date,
-		period = period,
-		subject = t.subject,
-		teacher = t.teacher,
-		grade = grade,
-		division = division
-	)
-	print(new)
+	periods = SHINYANG[this_year][this_semester]["PERIODS"][wd]
+	for p in range(periods):
+		base_cell_copy(grade, division, date, p+1)
+
+def base_cell_copy_z(date, period):
+	"""input: date, period"""
+	wd = weekday(date)
+	for gd in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]:
+		base_cell_copy(gd[0], gd[1], date, period)
+
+def base_day_copy_z(date):
+	"""input: date
+	For the given date, copies the base timetable for all grades and divisions"""
+	for gd in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]:
+		base_day_copy(gd[0], gd[1], date)
+
+
 
 class Modifier:
 	def change(grade, division, cell1, cell2):
@@ -42,8 +68,8 @@ class Modifier:
 
 		new1 = TimeTable.objects.create(
 			default = False,
-			year = year,
-			semester = semester,
+			year = this_year,
+			semester = this_semester,
 			date = cell2["date"],
 			period = cell2["period"],
 			subject = s1,
@@ -53,8 +79,8 @@ class Modifier:
 		)
 		new2 = TimeTable.objects.create(
 			default = False,
-			year = year,
-			semester = semester,
+			year = this_year,
+			semester = this_semester,
 			date = cell1["date"],
 			period = cell1["period"],
 			subject = s2,
@@ -65,13 +91,13 @@ class Modifier:
 		print(new1)
 		print(new2)
 
-	def date_time_mod(date, func):
+	def timerange_change(date, func):
 		# 1. 이미 존재하는 셀들 전부 가져옴.
 		# 2. 1번의 셀들 제외하고 전부 베이스에서 복붙
 		# 3. 그 날짜 전체 시간 조정.
 		if isinstance(date, str):
 			date = datetime.datetime.strptime(date, "%Y-%m-%d")
-		for gd in GRADE_DIVISION:
+		for gd in SHINYANG["2017"]["2"]["GRADE_DIVISION"]:
 			grade = gd[0]
 			division = gd[1]
 			wd = weekday(date)
@@ -82,7 +108,7 @@ class Modifier:
 				existing_periods.append(row.period)
 			for i in range(base_rows):
 				if i+1 not in existing_periods:
-					base_copy(grade, division, date, i+1)
+					base_cell_copy(grade, division, date, i+1)
 			targets = TimeTable.objects.filter(default=False, date=date, grade=grade, division=division)
 			for target in targets:
 				target.start, target.end = func(target)
