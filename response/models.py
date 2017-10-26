@@ -27,8 +27,8 @@ class TimeTable(models.Model):
 	CLASSROOM_CHOICES = zip(LOCATION_LIST, LOCATION_LIST)
 
 	default = models.BooleanField(verbose_name="기본값", default=False)
-	year = models.PositiveSmallIntegerField(verbose_name="년도", default=2017)
-	semester = models.PositiveSmallIntegerField(verbose_name="학기", choices=SEMESTER_CHOICES, default=2)
+	year = models.PositiveSmallIntegerField(verbose_name="년도", blank=True, null=True)
+	semester = models.PositiveSmallIntegerField(verbose_name="학기", choices=SEMESTER_CHOICES, null=True, blank=True)
 	date = models.DateField()
 	weekday = models.CharField(max_length=30,choices=WEEKDAY_CHOICES, verbose_name="요일", blank=True)
 	period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES, verbose_name="교시", default=1)
@@ -49,6 +49,11 @@ class TimeTable(models.Model):
 def my_handler(sender, instance, **kwargs):
 	if instance.date:
 		instance.weekday = TimeTable.WEEKDAY_LIST[instance.date.weekday()]
+		instance.year = instance.date.year
+		if instance.date.month < 8:
+			instance.semester = 1
+		else:
+			instance.semester = 2
 	if not (instance.start and instance.end):
 		instance.start, instance.end = Base.start_end(instance)
 
