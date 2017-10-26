@@ -8,12 +8,12 @@ def base_cell_copy(grade, division, date, period):
 	"""input: grade, division, date, period
 	Creates a new cell at the given date and prints it.
 	Doesn't return anything"""
+	if isinstance(date, str):
+			date = datetime.datetime.strptime(date, "%Y-%m-%d")
 	try:
 		t = TimeTable.objects.get(default=False, grade=grade, division=division, date=date, period=period)
 		print(t, "overwrite not possible.")
 	except:
-		if isinstance(date, str):
-			date = datetime.datetime.strptime(date, "%Y-%m-%d")
 		wd = weekday(date)
 		t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=wd, period=period)
 		new = TimeTable.objects.create(
@@ -31,6 +31,8 @@ def base_cell_copy(grade, division, date, period):
 
 def base_day_copy(grade, division, date):
 	"""input: grade, division, date"""
+	if isinstance(date, str):
+			date = datetime.datetime.strptime(date, "%Y-%m-%d")
 	wd = weekday(date)
 	periods = SHINYANG[this_year][this_semester]["PERIODS"][wd]
 	for p in range(periods):
@@ -38,6 +40,8 @@ def base_day_copy(grade, division, date):
 
 def base_cell_copy_z(date, period):
 	"""input: date, period"""
+	if isinstance(date, str):
+			date = datetime.datetime.strptime(date, "%Y-%m-%d")
 	wd = weekday(date)
 	for gd in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]:
 		base_cell_copy(gd[0], gd[1], date, period)
@@ -45,6 +49,8 @@ def base_cell_copy_z(date, period):
 def base_day_copy_z(date):
 	"""input: date
 	For the given date, copies the base timetable for all grades and divisions"""
+	if isinstance(date, str):
+			date = datetime.datetime.strptime(date, "%Y-%m-%d")
 	for gd in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]:
 		base_day_copy(gd[0], gd[1], date)
 
