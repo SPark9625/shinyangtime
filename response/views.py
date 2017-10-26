@@ -16,8 +16,7 @@ import datetime
 import random
 
 from .models import TimeTable
-from .tools.timetablemod import Modifier
-from .tools.misc import weekday, late_night_message, validate_teacher
+from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher
 
 from timetable.settings import BASE_DIR
 from shinyang import SHINYANG, this_year, this_semester
@@ -27,13 +26,8 @@ today = datetime.date.today()
 
 message_no_class_now = "지금은 수업중이 아닙니다.\n<최근 수업>"
 message_no_class_today = "오늘은 수업이 없습니다."
-# 1학년 1반(화):
-# 1교시 국어
-# 2교시 수학
-# 3교시 사회
-# 4교시 영어
-# 5교시 역사
-# 6교시 체육
+
+
 def view_class_weekday(grade, division, date):
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
@@ -43,7 +37,7 @@ def view_class_weekday(grade, division, date):
 		l = list()
 		for i in range(len(rows)):
 			l.append("\n{}교시 {}".format(rows[i].period, rows[i].subject))
-		name = "{}학년 {}반({}요일):".format(grade, division, wd)
+		name = "{}학년 {}반\n{}-{}({}요일):".format(grade, division, date.month, date.day wd)
 		message = ""
 		for r in l:
 			message += r
@@ -54,44 +48,31 @@ def view_class_weekday(grade, division, date):
 			"message": {"text": message_no_class_today}})
 
 
-
-# 선생님(오늘):
-# 1교시 1-1
-# 2교시 -
-# 3교시 -
-# 4교시 2-2
-# 5교시 2-3
-# 6교시 -
-# 7교시 -
 def view_teacher_weekday(teacher, date):
 	assert validate_teacher(teacher)
 	try:
 		assert len(TimeTable.objects.filter(teacher=teacher, date=date)) > 0
 	except:
 		return JsonResponse({
-		"message": {"text": "{}선생님은 오늘 수업이 없습니다.".format(teacher)}})
+		"message": {"text": "{}-{}\n{} 선생님은 오늘(이날) 수업이 없습니다.".format(date.month, date.day, teacher)}})
 	else:
 		wd = weekday(date)
 		periods = SHINYANG[this_year][this_semester]["PERIODS"][wd]
-		r = list()
+		rows = list()
 		for i in range(periods):
 			try:
 				row = TimeTable.objects.get(teacher=teacher, period=(i+1), date=date)
-				r.append("\n{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
+				rows.append("\n{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
 			except:
-				r.append("\n{}교시 -".format(i+1))
+				rows.append("\n{}교시 -".format(i+1))
 		message = ""
-		for row in r:
-			message += r
-		name = "{}({}요일):".format(teacher, weekday)
+		for row in rows:
+			message += row
+		name = "{}({}요일):".format(teacher, wd)
 		return JsonResponse({
 				"message": {"text": ("{}{}").format(name,message)}})
 
 
-# 1학년 1반(4교시):
-# 국어
-# 선생님
-# 교실
 def view_class_now(grade, division, t=now):
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
@@ -102,7 +83,7 @@ def view_class_now(grade, division, t=now):
 
 		row = TimeTable.objects.filter(grade=grade, division=division, date=today, start__lt=t).order_by("-period")[0]
 		period = row.period
-		name = "{}학년 {}반({}교시):".format(grade, division, period)
+		name = "{}-{}\n{}학년 {}반({}교시):".format(t.month, t.day, grade, division, period)
 
 		if t.time() > row.end:
 			message = message_no_class_now
@@ -111,13 +92,10 @@ def view_class_now(grade, division, t=now):
 				"message": {"text": "{}\n{}\n{}".format(name,row.subject,row.teacher)}})
 	except:
 		return JsonResponse({
-				"message": {"text": "오늘은 수업이 없습니다."}})
+				"message": {"text": "{}-{}\n오늘은 수업이 없습니다.".format(t.month, t.day)}})
 
 
 
-# 선생님(4교시):
-# 교실
-# 1학년 1반
 def view_teacher_now(teacher, t=now):
 	assert validate_teacher(teacher)
 	if t.time() < datetime.time(9,00):
@@ -131,12 +109,12 @@ def view_teacher_now(teacher, t=now):
 		assert len(rows) > 0
 	except:
 		return JsonResponse({
-			"message": {"text": "{}선생님은 오늘 수업이 없습니다.".format(teacher)}})
+			"message": {"text": "{}-{}\n{}선생님은 오늘 수업이 없습니다.".format(t.month, t.day, teacher)}})
 	else:
 		# 오늘 수업이 있긴 함
 		try:
 			row = rows.filter(start__lt=t).order_by("-period")[0]
-			name = "{}({}교시):".format(row.teacher, row.period)
+			name = "{}-{}\n{}({}교시):".format(t.month, t.day, row.teacher, row.period)
 			teachingDivision = "{}학년 {}반 {}".format(row.grade, row.division, row.subject)
 
 			if t.time() > row.end:
@@ -147,7 +125,7 @@ def view_teacher_now(teacher, t=now):
 		except:
 			period = rows.order_by("period")[0].period
 			return JsonResponse({
-				"message": {"text": "오늘 {}선생님의 첫 수업은 {}교시부터입니다.".format(teacher, period)}})
+				"message": {"text": "{}-{}\n오늘 {}선생님의 첫 수업은 {}교시부터입니다.".format(t.month, t.day, teacher, period)}})
 
 
 def view_class(target, options):
@@ -156,7 +134,7 @@ def view_class(target, options):
 		if options["now"]:
 			return view_class_now(grade, division)
 		else:
-			return view_class_weekday(grade, division, options["weekday"])
+			return view_class_weekday(grade, division, options["date"])
 	except:
 		return JsonResponse({
 			"message": {"text": "학년과 반이 올바르지 않습니다."}})
@@ -166,7 +144,7 @@ def view_teacher(target, options):
 		if options["now"]:
 			return view_teacher_now(target)
 		else:
-			return view_teacher_weekday(target, options["weekday"])
+			return view_teacher_weekday(target, options["date"])
 	except:
 		return JsonResponse({
 			"message": {"text": "이름을 다시 한 번 확인하십시오."}})
@@ -193,7 +171,7 @@ def answer(request):
 				"message": {"text": helper}})
 		elif content == "지금":
 			return JsonResponse({
-				"message": {"text": now}})
+				"message": {"text": now.isoformat(sep=" ", timespec="seconds")}})
 		elif content == "오늘":
 			return JsonResponse({
 				"message": {"text": today + "요일"}})
@@ -215,19 +193,21 @@ def answer(request):
 						return view_teacher(target, {"now": True})
 				# searching for weekday
 				else:
+					wd = weekday_rev(contents[1])
+					d = today + datetime.timedelta(days=wd - today.weekday())
 					if len(target.split("-")) > 1:
-						return view_class(target, {"now": False, "weekday": contents[1]})
+						return view_class(target, {"now": False, "date": d})
 					else:
 						# searching for teacher weekday
-						return view_teacher(target, {"now": False, "weekday": contents[1]})
+						return view_teacher(target, {"now": False, "date": d})
 
 			# there's no option
 			except:
 				target = content.strip()
 				if len(target.split("-")) > 1:
-					return view_class(target, {"now": False, "weekday": today})
+					return view_class(target, {"now": False, "date": today})
 				else:
-					return view_teacher(target, {"now": False, "weekday": today})
+					return view_teacher(target, {"now": False, "date": today})
 
 
 

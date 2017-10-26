@@ -5,6 +5,18 @@ def weekday(date=None):
 		date = datetime.datetime.now()
 	return "월 화 수 목 금".split()[date.weekday()]
 
+def weekday_rev(weekday):
+	if weekday == "월":
+		return 0
+	if weekday == "화":
+		return 1
+	if weekday == "수":
+		return 2
+	if weekday == "목":
+		return 3
+	if weekday == "금":
+		return 4
+
 def late_night_message():
 	with open(os.path.join(BASE_DIR, "response/etc/late_night_message.txt")) as f:
 		ls = f.readlines()

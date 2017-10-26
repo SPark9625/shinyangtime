@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from ..models import TimeTable
 from .misc import weekday
 from .period_to_time import Base, Custom
