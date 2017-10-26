@@ -7,7 +7,8 @@ year = 2017
 semester = 2
 
 def base_copy(grade, division, date, period):
-	t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=weekday, period=period)
+	wd = weekday(date)
+	t = TimeTable.objects.get(default=True, grade=grade, division=division, weekday=wd, period=period)
 	new = TimeTable.objects.create(
 		default = False,
 		year = year,
