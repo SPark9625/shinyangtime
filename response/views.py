@@ -175,7 +175,7 @@ def answer(request):
 				"message": {"text": now.isoformat(sep=" ", timespec="seconds")}})
 		elif content == "오늘":
 			return JsonResponse({
-				"message": {"text": str(today) + "요일"}})
+				"message": {"text": "{} {}요일".format(today, weekday(today))}})
 		elif "검색" in content:
 			return JsonResponse({
 				"message": {"text": "키보드 작동중"}})
