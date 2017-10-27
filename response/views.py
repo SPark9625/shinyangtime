@@ -22,8 +22,7 @@ from .tools.misc import weekday, weekday_rev, late_night_message, validate_teach
 from timetable.settings import BASE_DIR
 from shinyang import SHINYANG, this_year, this_semester
 
-now = datetime.datetime.now()
-today = datetime.date.today()
+
 
 message_no_class_now = "지금은 수업중이 아닙니다.\n<최근 수업>"
 message_no_class_today = "오늘은 수업이 없습니다."
@@ -153,6 +152,8 @@ def view_teacher(target, options):
 
 @csrf_exempt
 def answer(request):
+	now = datetime.datetime.now()
+	today = datetime.date.today()
 	if now.weekday() >= 5:
 		return JsonResponse({
 			"message": {"text": "주말엔 좀 쉬자..(허걱)"}})
