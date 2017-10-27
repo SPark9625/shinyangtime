@@ -73,7 +73,7 @@ def view_teacher_weekday(teacher, date):
 				"message": {"text": ("{}{}").format(name,message)}})
 
 
-def view_class_now(grade, division, t=datetime.datetime.now()):
+def view_class_now(grade, division, t):
 	today = datetime.date.today()
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
@@ -97,7 +97,7 @@ def view_class_now(grade, division, t=datetime.datetime.now()):
 
 
 
-def view_teacher_now(teacher, t=datetime.datetime.now()):
+def view_teacher_now(teacher, t):
 	today = datetime.date.today()
 	assert validate_teacher(teacher)
 	if t.time() < datetime.time(9,00):
@@ -131,10 +131,11 @@ def view_teacher_now(teacher, t=datetime.datetime.now()):
 
 
 def view_class(target, options):
+	now = datetime.datetime.now()
 	grade, division = map(int, map(str.strip, target.split("-")))
 	try:
 		if options["now"]:
-			return view_class_now(grade, division)
+			return view_class_now(grade, division, now)
 		else:
 			return view_class_weekday(grade, division, options["date"])
 	except:
@@ -142,9 +143,10 @@ def view_class(target, options):
 			"message": {"text": "학년과 반이 올바르지 않습니다."}})
 
 def view_teacher(target, options):
+	now = datetime.datetime.now()
 	try:
 		if options["now"]:
-			return view_teacher_now(target)
+			return view_teacher_now(target, now)
 		else:
 			return view_teacher_weekday(target, options["date"])
 	except:
