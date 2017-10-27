@@ -17,7 +17,7 @@ import datetime
 import random
 
 from .models import TimeTable
-from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher, now, today
+from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher
 
 from timetable.settings import BASE_DIR
 from shinyang import SHINYANG, this_year, this_semester
