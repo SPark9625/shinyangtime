@@ -17,7 +17,7 @@ import datetime
 import random
 
 from .models import TimeTable
-from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher
+from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher, now, today
 
 from timetable.settings import BASE_DIR
 from shinyang import SHINYANG, this_year, this_semester
@@ -73,7 +73,8 @@ def view_teacher_weekday(teacher, date):
 				"message": {"text": ("{}{}").format(name,message)}})
 
 
-def view_class_now(grade, division, t=now):
+def view_class_now(grade, division, t=datetime.datetime.now()):
+	today = datetime.date.today()
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
 		if t.time() < datetime.time(9,00):
@@ -96,7 +97,8 @@ def view_class_now(grade, division, t=now):
 
 
 
-def view_teacher_now(teacher, t=now):
+def view_teacher_now(teacher, t=datetime.datetime.now()):
+	today = datetime.date.today()
 	assert validate_teacher(teacher)
 	if t.time() < datetime.time(9,00):
 		message = late_night_message()
