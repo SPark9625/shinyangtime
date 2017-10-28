@@ -180,7 +180,7 @@ def answer(request):
 				"message": {"text": helper}})
 		elif content == "지금":
 			return JsonResponse({
-				"message": {"text": now.isoformat(sep=" ", timespec="seconds")}})
+				"message": {"text": "{}년 {}월 {}일 {}시 {}분 {}초".format(now.year, now.month, now.day, now.hour, now.minute, now.second)}})
 		elif content == "오늘":
 			return JsonResponse({
 				"message": {"text": "{} {}요일".format(today, weekday(today))}})
