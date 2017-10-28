@@ -1,0 +1,7 @@
+#main {
+	border-collapse: collapse;
+}
+
+#main td, #main th {
+	border: 1px solid grey;
+}

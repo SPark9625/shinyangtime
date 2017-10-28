@@ -68,13 +68,16 @@ def view_teacher_weekday(teacher, date):
 		message = ""
 		for row in rows:
 			message += row
-		name = "{}({}요일):".format(teacher, wd)
+		name = "{}\n{}-{}({}요일):".format(teacher, date.month, date.day, wd)
 		return JsonResponse({
 				"message": {"text": ("{}{}").format(name,message)}})
 
 
 def view_class_now(grade, division, t):
 	today = datetime.date.today()
+	if today.weekday() >= 5:
+		return JsonResponse({
+			"message": {"text": "주말에는 지원하지 않는 서비스입니다."}})
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
 	try:
 		if t.time() < datetime.time(9,00):
@@ -99,6 +102,9 @@ def view_class_now(grade, division, t):
 
 def view_teacher_now(teacher, t):
 	today = datetime.date.today()
+	if today.weekday() >= 5:
+		return JsonResponse({
+			"message": {"text": "주말에는 지원하지 않는 서비스입니다."}})
 	assert validate_teacher(teacher)
 	if t.time() < datetime.time(9,00):
 		message = late_night_message()
@@ -158,9 +164,6 @@ def view_teacher(target, options):
 def answer(request):
 	now = datetime.datetime.now()
 	today = datetime.date.today()
-	if now.weekday() >= 5:
-		return JsonResponse({
-			"message": {"text": "주말엔 좀 쉬자..(허걱)"}})
 	try:
 		input_request = request.body.decode("utf-8")
 		input_json = json.loads(input_request)
@@ -200,7 +203,10 @@ def answer(request):
 				# searching for weekday
 				else:
 					wd = weekday_rev(contents[1])
+					if today.weekday() > 4:
+						today += datetime.timedelta(days=2)
 					d = today + datetime.timedelta(days=wd - today.weekday())
+
 					if len(target.split("-")) > 1:
 						return view_class(target, {"now": False, "date": d})
 					else:
@@ -223,3 +229,14 @@ def answer(request):
 
 
 
+def view(request):
+	context = {
+		"var": "World!",
+		"period_list": "1 2 3 4 5 6 7".split(),
+		"monday": ["미술","국어","수학","과학","체육","음악","창체"],
+		"tuesday": [1,2,3,4,5,6],
+		"wednesday": [1,2,3,4,5],
+		"thursday": [1,2,3,4,5,6,7],
+		"friday": [1,2,3,4,5,6,7],
+	}
+	return render(request, "response/timetable.html", context)

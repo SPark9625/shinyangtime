@@ -1,5 +1,5 @@
 from django.contrib import admin
-from . import models
+from response import models
 
 class TimeTableAdmin(admin.ModelAdmin):
 	list_filter = ["default","modified","year","semester","date","grade","division"]
