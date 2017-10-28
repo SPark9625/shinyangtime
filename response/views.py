@@ -57,11 +57,12 @@ def view_teacher_weekday(teacher, date):
 		"message": {"text": "{}-{}\n{} 선생님은 오늘(이날) 수업이 없습니다.".format(date.month, date.day, teacher)}})
 	else:
 		wd = weekday(date)
-		periods = SHINYANG[this_year][this_semester]["PERIODS"][wd]
+		all_periods = TimeTable.objects.filter(teacher=teacher, date=date).order_by("-period")
+		periods = all_periods[0].period
 		rows = list()
 		for i in range(periods):
 			try:
-				row = TimeTable.objects.get(teacher=teacher, period=(i+1), date=date)
+				row = all_periods.get(period=(i+1))
 				rows.append("\n{}교시 {} {}-{}".format(i+1, row.subject, row.grade, row.division))
 			except:
 				rows.append("\n{}교시 -".format(i+1))
