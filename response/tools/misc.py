@@ -3,7 +3,7 @@ import datetime
 def weekday(date=None):
 	if date == None:
 		date = datetime.datetime.now()
-	return "월 화 수 목 금".split()[date.weekday()]
+	return "월 화 수 목 금 토 일".split()[date.weekday()]
 
 def weekday_rev(weekday):
 	if weekday == "월":

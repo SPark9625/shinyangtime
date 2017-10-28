@@ -167,7 +167,7 @@ def answer(request):
 	try:
 		input_request = request.body.decode("utf-8")
 		input_json = json.loads(input_request)
-		content = input_json["content"]
+		content = input_json["content"].strip()
 
 	except:
 		return JsonResponse({
@@ -191,7 +191,7 @@ def answer(request):
 		else:
 			# determine if an option exists
 			try:
-				contents = content.strip().split()
+				contents = content.split()
 				assert len(contents) == 2 and contents[1] in  "지금 월 화 수 목 금".split()
 				target = contents[0]
 				if contents[1] == "지금":
@@ -215,7 +215,7 @@ def answer(request):
 
 			# there's no option
 			except:
-				target = content.strip()
+				target = content
 				if len(target.split("-")) > 1:
 					return view_class(target, {"now": False, "date": today})
 				else:
