@@ -207,8 +207,8 @@ def answer(request):
 						wd = today.weekday()
 					else:
 						wd = weekday_rev(contents[1])
-					if today.weekday() > 4:
-						today += datetime.timedelta(days=2)
+						if today.weekday() > 4:
+							today += datetime.timedelta(days=2)
 					d = today + datetime.timedelta(days=wd - today.weekday())
 
 					if len(target.split("-")) > 1:
