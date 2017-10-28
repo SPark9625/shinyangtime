@@ -203,12 +203,12 @@ def answer(request):
 						return view_teacher(target, {"now": True})
 				# searching for weekday
 				else:
-					if today.weekday() > 4:
-						today += datetime.timedelta(days=2)
 					if contents[1] == "오늘":
-						wd = weekday(today)
+						wd = today.weekday()
 					else:
 						wd = weekday_rev(contents[1])
+					if today.weekday() > 4:
+						today += datetime.timedelta(days=2)
 					d = today + datetime.timedelta(days=wd - today.weekday())
 
 					if len(target.split("-")) > 1:
