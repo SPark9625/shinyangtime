@@ -195,7 +195,7 @@ def answer(request):
 				contents = content.split()
 				assert len(contents) == 2 and contents[1] in  "지금 오늘 월 화 수 목 금".split()
 				target = contents[0]
-				if contents[1] in ["지금","오늘"]:
+				if contents[1] == "지금":
 					if len(target.split("-")) > 1:
 						return view_class(target, {"now": True})
 					else:
@@ -203,9 +203,12 @@ def answer(request):
 						return view_teacher(target, {"now": True})
 				# searching for weekday
 				else:
-					wd = weekday_rev(contents[1])
 					if today.weekday() > 4:
 						today += datetime.timedelta(days=2)
+					if contents[1] == "오늘":
+						wd = weekday(today)
+					else:
+						wd = weekday_rev(contents[1])
 					d = today + datetime.timedelta(days=wd - today.weekday())
 
 					if len(target.split("-")) > 1:
