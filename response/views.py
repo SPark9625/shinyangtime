@@ -193,9 +193,9 @@ def answer(request):
 			# determine if an option exists
 			try:
 				contents = content.split()
-				assert len(contents) == 2 and contents[1] in  "지금 월 화 수 목 금".split()
+				assert len(contents) == 2 and contents[1] in  "지금 오늘 월 화 수 목 금".split()
 				target = contents[0]
-				if contents[1] == "지금":
+				if contents[1] in ["지금","오늘"]:
 					if len(target.split("-")) > 1:
 						return view_class(target, {"now": True})
 					else:
