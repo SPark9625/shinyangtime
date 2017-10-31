@@ -27,3 +27,9 @@ def validate_teacher(teacher):
 		return True
 	else:
 		return False
+
+def period_time(inst):
+	return "{}:{}~\n{}:{}".format(inst.start.hour, inst.start.minute, inst.end.hour, inst.end.minute)
+
+def format_date(date):
+	return "{}월 {}일".format(date.month, date.day)
