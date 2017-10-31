@@ -1,5 +1,8 @@
 from ..models import TimeTable
 import datetime
+import os
+from timetable.settings import BASE_DIR
+
 def weekday(date=None):
 	if date == None:
 		date = datetime.datetime.now()
@@ -20,7 +23,7 @@ def weekday_rev(weekday):
 def late_night_message():
 	with open(os.path.join(BASE_DIR, "response/etc/late_night_message.txt")) as f:
 		ls = f.readlines()
-	return [line.strip() for line in ls]
+	return [line for line in ls]
 
 def validate_teacher(teacher):
 	if teacher in TimeTable.TEACHER_LIST:

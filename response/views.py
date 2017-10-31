@@ -196,7 +196,8 @@ def answer(request):
 				contents = content.split()
 				assert len(contents) == 2 and contents[1] in  "지금 오늘 월 화 수 목 금 토 일".split()
 				if contents[1] in  ["토", "일"]:
-					return JsonResponse({"message": {"text": "토, 일요일로는 검색하실 수 없습니다."}})
+					return JsonResponse({
+						"message": {"text": "토, 일요일로는 검색하실 수 없습니다."}})
 				target = contents[0]
 				if contents[1] == "지금":
 					if len(target.split("-")) > 1:
