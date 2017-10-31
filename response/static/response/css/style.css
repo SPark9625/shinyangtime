@@ -1,16 +1,15 @@
+@import url(//fonts.googleapis.com/earlyaccess/nanumgothic.css);
+@import url(//fonts.googleapis.com/earlyaccess/nanumpenscript.css);
+
 #main {
 	border-collapse: collapse;
-}
-
-#main td, #main th {
-	border: 1px solid grey;
 }
 
 body {
 	text-align: center;
 }
 
-input {
-	display: inline-block;
-	margin: 10px;
+th > label {
+	font-family: 'Nanum Pen Script', cursive;
+	/*font-family: 'Nanum Gothic', serif;*/
 }

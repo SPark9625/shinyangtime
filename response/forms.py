@@ -1,5 +1,5 @@
 from django import forms
 
 class ProposalForm(forms.Form):
-	title = forms.CharField()
-	text = forms.CharField(max_length=300, widget=forms.Textarea)
+	title = forms.CharField(label="제목")
+	text = forms.CharField(label="내용", widget=forms.Textarea)

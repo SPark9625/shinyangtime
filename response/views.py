@@ -261,7 +261,3 @@ def proposal(request):
 	else:
 		form = ProposalForm()
 		return render(request, "response/proposal.html", {"p": form})
-
-
-# def thanks(request):
-# 	return render(request, "response/thanks.html")
