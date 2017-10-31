@@ -16,12 +16,13 @@ import json
 import datetime
 import random
 
-from .models import TimeTable
+from .models import TimeTable, Proposal
 from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher
 
 from timetable.settings import BASE_DIR
 from shinyang import SHINYANG, this_year, this_semester
 
+from response.forms import ProposalForm
 
 
 message_no_class_now = "지금은 수업중이 아닙니다.\n<최근 수업>"
@@ -244,3 +245,20 @@ def view(request):
 		"friday": [1,2,3,4,5,6,7],
 	}
 	return render(request, "response/timetable.html", context)
+
+
+
+def proposal(request):
+	if request.method == "POST":
+		form = ProposalForm(request.POST)
+		if form.is_valid():
+			cd = form.cleaned_data
+			Proposal.objects.create(title=cd["title"], text=cd["text"])
+			return render(request, "response/thanks.html")
+	else:
+		form = ProposalForm()
+		return render(request, "response/proposal.html", {"p": form})
+
+
+# def thanks(request):
+# 	return render(request, "response/thanks.html")

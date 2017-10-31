@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 from response.tools.period_to_time import Base, Custom
 
+import datetime
 
 
 
@@ -44,8 +45,6 @@ class TimeTable(models.Model):
 	def __str__(self):
 		return "{}요일 {}학년 {}반 {}교시 {}".format(self.weekday, self.grade, self.division, self.period, self.subject)
 
-
-
 @receiver(pre_save, sender=TimeTable)
 def my_handler(sender, instance, **kwargs):
 	if instance.date:
@@ -59,3 +58,14 @@ def my_handler(sender, instance, **kwargs):
 		instance.start, instance.end = Base.start_end(instance)
 
 
+
+
+
+class Proposal(models.Model):
+	datetime = models.DateTimeField(default=datetime.datetime.now())
+	title = models.CharField(max_length=100)
+	text = models.TextField()
+	
+
+	def __str__(self):
+		return self.text[:20]

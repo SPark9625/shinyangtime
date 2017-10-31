@@ -3,11 +3,15 @@ from response import models
 
 class TimeTableAdmin(admin.ModelAdmin):
 	list_filter = ["default","modified","year","semester","date","grade","division"]
-	# fieldsets = [
-	# 	# (None, 				{"fields": ["default"]}),
-	# 	# ("Year/Semester", 	{"fields": ["year", "semester"]}),
-	# 	("Period related", 	{"fields": ["date", "period"]}),
-	# 	("Class related", 	{"fields": ["subject", "teacher", "grade", "division"]}),
-	# ]
+	fieldsets = [
+		(None, 				{"fields": ["modified"]}),
+		# ("Year/Semester", 	{"fields": ["year", "semester"]}),
+		("Period related", 	{"fields": ["date", "period"]}),
+		("Class related", 	{"fields": ["subject", "teacher", "grade", "division"]}),
+	]
+
+class ProposalAdmin(admin.ModelAdmin):
+	fields = ["title","text"]
 
 admin.site.register(models.TimeTable, TimeTableAdmin)
+admin.site.register(models.Proposal, ProposalAdmin)

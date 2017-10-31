@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{% static 'response/css/style.css' %}">
+	<title>신양시간 건의사항</title>
+</head>
+<body>
+	<form action="{% url 'response:proposal' %}" method="POST">
+		{% csrf_token %}
+		<table>
+			{{ p }}
+		</table>
+		<input type="submit" value="Submit">
+	</form>
+</body>
+</html>

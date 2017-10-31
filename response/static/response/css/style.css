@@ -5,3 +5,12 @@
 #main td, #main th {
 	border: 1px solid grey;
 }
+
+body {
+	text-align: center;
+}
+
+input {
+	display: inline-block;
+	margin: 10px;
+}
