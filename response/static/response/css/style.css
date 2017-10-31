@@ -10,6 +10,6 @@ body {
 }
 
 th > label {
-	font-family: 'Nanum Pen Script', cursive;
-	/*font-family: 'Nanum Gothic', serif;*/
+	/*font-family: 'Nanum Pen Script', cursive;*/
+	font-family: 'Nanum Gothic', serif;
 }
