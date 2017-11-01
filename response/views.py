@@ -189,6 +189,8 @@ def answer(request):
 		elif "검색" in content:
 			return JsonResponse({
 				"message": {"text": "키보드 작동중"}})
+		elif content == "시정표":
+			return view_period_time(today)
 
 		else:
 			# determine if an option exists
@@ -261,3 +263,12 @@ def proposal(request):
 	else:
 		form = ProposalForm()
 		return render(request, "response/proposal.html", {"p": form})
+
+def view_period_time(date):
+	i = TimeTable.objects.filter(date=date)[0]
+	grade, division = i.grade, i.division
+	rows = TimeTable.objects.filter(date=date, grade=grade, division=division).order_by("period")
+	m = "시정표({}):".format(format_date(date))
+	for row in rows:
+		m += ('\n{}교시'.format(row.period) + period_time(row))
+	return JsonResponse({"message": {"text": m}})
