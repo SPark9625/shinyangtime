@@ -9,15 +9,16 @@ body {
 	text-align: center;
 }
 
-table {
-	text-align: left;
-}
-
 th > label {
 	/*font-family: 'Nanum Pen Script', cursive;*/
 	font-family: 'Nanum Gothic', serif;
 }
 
-td > input {
+td > * {
 	width: 100%;
+	box-sizing: border-box;
+}
+
+td > input[type=submit] {
+	width: 50px;
 }
