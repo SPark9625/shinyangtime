@@ -270,5 +270,5 @@ def view_period_time(date):
 	rows = TimeTable.objects.filter(date=date, grade=grade, division=division).order_by("period")
 	m = "시정표({}):".format(format_date(date))
 	for row in rows:
-		m += ('\n{}교시'.format(row.period) + period_time(row))
+		m += ('\n{}교시 '.format(row.period) + period_time(row))
 	return JsonResponse({"message": {"text": m}})
