@@ -37,7 +37,7 @@ def view_class_weekday(grade, division, date):
 		assert len(rows) > 0
 		l = list()
 		for i in range(len(rows)):
-			l.append("\n{}교시 {}".format(rows[i].period, rows[i].subject))
+			l.append("\n{}교시 {} {}".format(rows[i].period, rows[i].subject, rows[i].teacher))
 		name = "{}학년 {}반\n{}({}요일):".format(grade, division, format_date(date), wd)
 		message = ""
 		for r in l:
@@ -55,7 +55,7 @@ def view_teacher_weekday(teacher, date):
 		assert len(TimeTable.objects.filter(teacher=teacher, date=date)) > 0
 	except:
 		return JsonResponse({
-		"message": {"text": "{}-{}\n{} 선생님은 오늘(이날) 수업이 없습니다.".format(date.month, date.day, teacher)}})
+		"message": {"text": "{}\n{} 선생님은 오늘(이날) 수업이 없습니다.".format(format_date(date), teacher)}})
 	else:
 		wd = weekday(date)
 		all_periods = TimeTable.objects.filter(teacher=teacher, date=date).order_by("-period")
@@ -70,7 +70,7 @@ def view_teacher_weekday(teacher, date):
 		message = ""
 		for row in rows:
 			message += row
-		name = "{}\n{}-{}({}요일):".format(teacher, date.month, date.day, wd)
+		name = "{}\n{}({}요일):".format(teacher, format_date(date), wd)
 		return JsonResponse({
 				"message": {"text": ("{}{}").format(name,message)}})
 

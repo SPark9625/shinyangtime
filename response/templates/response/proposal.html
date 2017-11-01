@@ -11,8 +11,13 @@
 		{% csrf_token %}
 		<table>
 			{{ p }}
+			<tr>
+				<th></th>
+				<td>
+					<input type="submit" value="제출">
+				</td>
+			</tr>
 		</table>
-		<input type="submit" value="Submit">
 	</form>
 </body>
 </html>
