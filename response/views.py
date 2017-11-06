@@ -225,11 +225,14 @@ def answer(request):
 
 			# there's no option
 			except:
-				target = content
-				if len(target.split("-")) > 1:
-					return view_class(target, {"now": False, "date": today})
-				else:
-					return view_teacher(target, {"now": False, "date": today})
+				try:
+					target = content
+					if len(target.split("-")) > 1:
+						return view_class(target, {"now": False, "date": today})
+					else:
+						return view_teacher(target, {"now": False, "date": today})
+				except:
+					return JsonResponse({"message": {"text": "입력형식이 올바르지 않습니다."}})
 
 
 
