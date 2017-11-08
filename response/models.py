@@ -63,15 +63,15 @@ class Query(models.Model):
 	teacher = models.CharField(blank=True, max_length=30)
 	grade_division = models.CharField(blank=True, max_length=20)
 	option = models.CharField(blank=True, max_length=10)
-	date = models.DateTimeField(blank=True, null=True)
+	date = models.DateTimeField(auto_now_add=True)
 
 
 	def __str__(self):
 		return "선생님: {}, 학년반: {}, 옵션: {}, 날짜시간: {}".format(str(self.teacher), str(self.grade_division), str(self.option), self.date.strftime("%Y년 %m월 %d일 %T"))
 
 
-@receiver(pre_save, sender=Query)
-def query_handler(sender, instance, **kwargs):
-	instance.date = timezone.now()
+# @receiver(pre_save, sender=Query)
+# def query_handler(sender, instance, **kwargs):
+# 	instance.date = timezone.make_aware(datetime.datetime.now(),timezone.get_default_timezone())
 
 
