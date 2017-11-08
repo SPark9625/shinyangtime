@@ -52,13 +52,13 @@ def view_class_weekday(grade, division, date):
 def view_teacher_weekday(teacher, date):
 	assert validate_teacher(teacher)
 	try:
-		assert len(TimeTable.objects.filter(teacher=teacher, date=date)) > 0
+		assert len(TimeTable.objects.filter(teacher__contains=teacher, date=date)) > 0
 	except:
 		return JsonResponse({
 		"message": {"text": "{}\n{} 선생님은 오늘(이날) 수업이 없습니다.".format(format_date(date), teacher)}})
 	else:
 		wd = weekday(date)
-		all_periods = TimeTable.objects.filter(teacher=teacher, date=date).order_by("-period")
+		all_periods = TimeTable.objects.filter(teacher__contains=teacher, date=date).order_by("-period")
 		periods = all_periods[0].period
 		rows = list()
 		for i in range(periods):
@@ -115,7 +115,7 @@ def view_teacher_now(teacher, t):
 		return JsonResponse({
 			"message": {"text": message[random.randint(0, len(message)-1)]}})
 	try:
-		rows = TimeTable.objects.filter(teacher=teacher, date=today)
+		rows = TimeTable.objects.filter(teacher__contains=teacher, date=today)
 		assert len(rows) > 0
 	except:
 		return JsonResponse({
