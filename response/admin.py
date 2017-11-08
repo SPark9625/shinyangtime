@@ -10,9 +10,5 @@ class TimeTableAdmin(admin.ModelAdmin):
 		("Class related", 	{"fields": ["subject", "teacher", "grade", "division"]}),
 	]
 
-class ProposalAdmin(admin.ModelAdmin):
-	fields = ["title","text"]
-
 admin.site.register(models.TimeTable, TimeTableAdmin)
-admin.site.register(models.Proposal, ProposalAdmin)
 admin.site.register(models.Query)

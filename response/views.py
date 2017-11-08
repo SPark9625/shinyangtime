@@ -16,13 +16,11 @@ import json
 import datetime
 import random
 
-from .models import TimeTable, Proposal, Query
+from .models import TimeTable, Query
 from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher, period_time, format_date
 
 from timetable.settings import BASE_DIR
 from shinyang import SHINYANG, this_year, this_semester
-
-from response.forms import ProposalForm
 
 
 message_no_class_now = "지금은 수업중이 아닙니다.\n<최근 수업>"

@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from response.tools.period_to_time import Base, Custom
 
 import datetime
+from django.utils import timezone
 
 
 
@@ -58,18 +59,6 @@ def my_handler(sender, instance, **kwargs):
 		instance.start, instance.end = Base.start_end(instance)
 
 
-
-
-
-class Proposal(models.Model):
-	datetime = models.DateTimeField(default=datetime.datetime.now())
-	title = models.CharField(max_length=100)
-	text = models.TextField()
-
-	def __str__(self):
-		return self.text[:20]
-
-
 class Query(models.Model):
 	teacher = models.CharField(blank=True, max_length=30)
 	grade_division = models.CharField(blank=True, max_length=20)
@@ -83,6 +72,6 @@ class Query(models.Model):
 
 @receiver(pre_save, sender=Query)
 def query_handler(sender, instance, **kwargs):
-	instance.date = datetime.datetime.now()
+	instance.date = timezone.now()
 
 
