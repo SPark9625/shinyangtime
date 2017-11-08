@@ -170,7 +170,6 @@ def answer(request):
 		input_request = request.body.decode("utf-8")
 		input_json = json.loads(input_request)
 		content = input_json["content"].strip()
-
 	except:
 		return JsonResponse({
 			"message": {"text": "Wrong path. 잘못된 접근입니다."}})

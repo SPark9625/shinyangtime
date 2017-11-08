@@ -69,3 +69,13 @@ class Proposal(models.Model):
 
 	def __str__(self):
 		return self.text[:20]
+
+
+class query(models.Model):
+	teacher = models.CharField(blank=True)
+	grade_division = models.PositiveSmallIntegerField(blank=True, null=True)
+	option = models.CharField(blank=True)
+	period_time = models.BooleanField(blank=True, null=True)
+
+	def __str__(self):
+		return "선생님: {}, 학년반: {}, 옵션: {}, 시정표: {}".format(str(self.teacher), str(self.grade_division), str(self.option), str(self.period_time))
