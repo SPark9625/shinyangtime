@@ -66,6 +66,6 @@ class Query(models.Model):
 	date = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return "선생님: {}, 학년반: {}, 옵션: {}, 날짜시간: {}".format(str(self.teacher), str(self.grade_division), str(self.option), self.date.strftime("%Y년 %m월 %d일 %T"))
+		return "{} {} {}, 날짜시간: {}".format(str(self.teacher), str(self.grade_division), str(self.option), self.date.strftime("%Y년 %m월 %d일 %T"))
 
 
