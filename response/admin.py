@@ -15,3 +15,4 @@ class ProposalAdmin(admin.ModelAdmin):
 
 admin.site.register(models.TimeTable, TimeTableAdmin)
 admin.site.register(models.Proposal, ProposalAdmin)
+admin.site.register(models.Query)

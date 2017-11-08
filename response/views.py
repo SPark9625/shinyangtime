@@ -16,7 +16,7 @@ import json
 import datetime
 import random
 
-from .models import TimeTable, Proposal
+from .models import TimeTable, Proposal, Query
 from .tools.misc import weekday, weekday_rev, late_night_message, validate_teacher, period_time, format_date
 
 from timetable.settings import BASE_DIR
@@ -175,20 +175,24 @@ def answer(request):
 			"message": {"text": "Wrong path. 잘못된 접근입니다."}})
 	else:
 		if content == "도움말":
+			Query.objects.create(option="도움말")
 			with open(os.path.join(BASE_DIR, "response/etc/helper.txt")) as f:
 				helper = f.read()
 			return JsonResponse({
 				"message": {"text": helper}})
 		elif content == "지금":
+			Query.objects.create(option="지금")
 			return JsonResponse({
 				"message": {"text": "{}년 {}월 {}일 {}시 {}분 {}초".format(now.year, now.month, now.day, now.hour, now.minute, now.second)}})
 		elif content == "오늘":
+			Query.objects.create(option="오늘")
 			return JsonResponse({
 				"message": {"text": "{} {}요일".format(today, weekday(today))}})
 		elif "검색" in content:
 			return JsonResponse({
 				"message": {"text": "키보드 작동중"}})
 		elif content == "시정표":
+			Query.objects.create(option="시정표")
 			return view_period_time(today)
 
 		else:
@@ -202,8 +206,10 @@ def answer(request):
 				target = contents[0]
 				if contents[1] == "지금":
 					if len(target.split("-")) > 1:
+						Query.objects.create(grade_division=target, option="지금")
 						return view_class(target, {"now": True})
 					else:
+						Query.objects.create(teacher=target, option="지금")
 						# searching for teacher "now"
 						return view_teacher(target, {"now": True})
 				# searching for weekday
@@ -217,8 +223,10 @@ def answer(request):
 					d = today + datetime.timedelta(days=wd - today.weekday())
 
 					if len(target.split("-")) > 1:
+						Query.objects.create(grade_division=target, option=contents[1])
 						return view_class(target, {"now": False, "date": d})
 					else:
+						Query.objects.create(teacher=target, option=contents[1])
 						# searching for teacher weekday
 						return view_teacher(target, {"now": False, "date": d})
 
@@ -227,8 +235,10 @@ def answer(request):
 				try:
 					target = content
 					if len(target.split("-")) > 1:
+						Query.objects.create(grade_division=target)
 						return view_class(target, {"now": False, "date": today})
 					else:
+						Query.objects.create(teacher=target)
 						return view_teacher(target, {"now": False, "date": today})
 				except:
 					return JsonResponse({"message": {"text": "입력형식이 올바르지 않습니다."}})

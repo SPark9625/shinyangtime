@@ -65,17 +65,15 @@ class Proposal(models.Model):
 	datetime = models.DateTimeField(default=datetime.datetime.now())
 	title = models.CharField(max_length=100)
 	text = models.TextField()
-	
 
 	def __str__(self):
 		return self.text[:20]
 
 
-class query(models.Model):
-	teacher = models.CharField(blank=True)
-	grade_division = models.PositiveSmallIntegerField(blank=True, null=True)
-	option = models.CharField(blank=True)
-	period_time = models.BooleanField(blank=True, null=True)
+class Query(models.Model):
+	teacher = models.CharField(blank=True, max_length=30)
+	grade_division = models.CharField(blank=True, max_length=20)
+	option = models.CharField(blank=True, max_length=10)
 
 	def __str__(self):
-		return "선생님: {}, 학년반: {}, 옵션: {}, 시정표: {}".format(str(self.teacher), str(self.grade_division), str(self.option), str(self.period_time))
+		return "선생님: {}, 학년반: {}, 옵션: {}".format(str(self.teacher), str(self.grade_division), str(self.option))
