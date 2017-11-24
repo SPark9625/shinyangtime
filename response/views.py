@@ -118,7 +118,7 @@ def answer(request):
 		input_json = json.loads(input_request)
 		content = input_json["content"].strip()
 	except:
-                q_option = None
+        q_option = None
 		text = error(404)
 
 	# message processed
