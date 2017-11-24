@@ -9,15 +9,15 @@ def weekday(date=None):
 	return "월 화 수 목 금 토 일".split()[date.weekday()]
 
 def weekday_rev(weekday):
-	if weekday == "월":
+	if "월" in weekday:
 		return 0
-	if weekday == "화":
+	if "화" in weekday:
 		return 1
-	if weekday == "수":
+	if "수" in weekday:
 		return 2
-	if weekday == "목":
+	if "목" in weekday:
 		return 3
-	if weekday == "금":
+	if "금" in weekday:
 		return 4
 
 def late_night_message():

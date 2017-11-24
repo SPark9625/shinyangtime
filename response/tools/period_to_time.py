@@ -63,3 +63,19 @@ class Custom:
 			return ["13:35", "14:20"]
 		elif instance.period == 7:
 			return ["14:30", "15:15"]
+
+	def start_end_2017_11_22(instance):
+		if instance.period == 1:
+			return ["09:15", "09:50"]
+		elif instance.period == 2:
+			return ["10:00", "10:35"]
+		elif instance.period == 3:
+			return ["10:45", "11:20"]
+		elif instance.period == 4:
+			return ["11:30", "12:05"]
+		elif instance.period == 5:
+			return ["12:15", "12:50"]
+		elif instance.period == 6:
+			return ["13:35", "14:20"]
+		elif instance.period == 7:
+			return ["14:30", "15:15"]

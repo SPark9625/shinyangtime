@@ -197,8 +197,8 @@ def answer(request):
 			# determine if an option exists
 			try:
 				contents = content.split()
-				assert len(contents) == 2 and contents[1] in  "지금 오늘 월 화 수 목 금 토 일".split()
-				if contents[1] in  ["토", "일"]:
+				assert len(contents) == 2 and contents[1] in  "지금 오늘 월 월요일 화 화요일 수 수요일 목 목요일 금 금요일 토 토요일 일 일요일".split()
+				if contents[1] in  ["토", "토요일", "일", "일요일"]:
 					return JsonResponse({
 						"message": {"text": "토, 일요일로는 검색하실 수 없습니다."}})
 				target = contents[0]
