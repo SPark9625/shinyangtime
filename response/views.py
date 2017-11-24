@@ -24,26 +24,26 @@ from shinyang import SHINYANG, this_year, this_semester
 OPTIONS = ['지금', '어제', '오늘', '내일', '월', '화', '수', '목', '금', '월요일', '화요일', '수요일', '목요일', '금요일']
 
 
-def view_class_weekday(grade, division, datetime):
+def view_class_weekday(grade, division, dt):
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
-	wd = weekday(datetime)
-	rows = TimeTable.objects.filter(grade=grade, division=division, date=datetime).order_by("period")
+	wd = weekday(dt)
+	rows = TimeTable.objects.filter(grade=grade, division=division, date=dt).order_by("period")
 	if rows.count() == 0:
-		return error('no_class_today', now=now)
-	title = "{}학년 {}반\n{}({}요일):".format(grade, division, format_date(datetime), wd)
+		return error('no_class_today', now=dt)
+	title = "{}학년 {}반\n{}({}요일):".format(grade, division, format_date(dt), wd)
 	l = [class_period(row.period, row.subject, row.teacher) for row in rows]
 	message = '\n'.join(l)
 	return '\n'.join([title, message])
 		
 
 
-def view_teacher_weekday(teacher, datetime):
+def view_teacher_weekday(teacher, dt):
 	validate_teacher(teacher) #! teacher list should be in SHINYANG[this_year]
-	all_periods = TimeTable.objects.filter(teacher__contains=teacher, date=datetime).order_by("period")
+	all_periods = TimeTable.objects.filter(teacher__contains=teacher, date=dt).order_by("period")
 	if all_periods.count() == 0:
-		return error('no_class_today_teacher', teacher=teacher, now=datetime)
+		return error('no_class_today_teacher', teacher=teacher, now=dt)
 	periods = all_periods.last().period
-	wd = weekday(datetime)
+	wd = weekday(dt)
 	rows = list()
 	for i in range(periods):
 		try:
@@ -52,67 +52,67 @@ def view_teacher_weekday(teacher, datetime):
 		except:
 			rows.append("{}교시 -".format(i+1))
 	message = '\n'.join(rows)
-	title = "{}\n{}({}요일):".format(teacher, format_date(datetime), wd)
+	title = "{}\n{}({}요일):".format(teacher, format_date(dt), wd)
 	return "\n".join([title,message])
 
 
-def view_class_now(grade, division, datetime):
-	if datetime.weekday() >= 5:
+def view_class_now(grade, division, dt):
+	if dt.weekday() >= 5:
 		return error('weekend')
 	assert (grade, division) in SHINYANG[this_year][this_semester]["GRADE_DIVISION"]
-	if datetime.time() < datetime.time(9,15):
+	if dt.time() < datetime.time(9,15):
 		message = late_night_message()
 		return random.choice(message)
-	row = TimeTable.objects.filter(grade=grade, division=division, date=datetime, start__lt=datetime).order_by("-period").first()
+	row = TimeTable.objects.filter(grade=grade, division=division, date=dt, start__lt=dt).order_by("-period").first()
 	if not row:
-		return error('no_class_today', now=now)
+		return error('no_class_today', now=dt)
 	period = row.period
-	title = "{}\n{}학년 {}반({}교시):\n{}".format(format_date(datetime), grade, division, period, period_time(row))
-	if datetime.time() > row.end:
+	title = "{}\n{}학년 {}반({}교시):\n{}".format(format_date(dt), grade, division, period, period_time(row))
+	if dt.time() > row.end:
 		message = error('no_class_now')
 		title = '\n'.join([message, title])
 	return '\n'.join([title,row.subject,row.teacher])
 
-def view_teacher_now(teacher, datetime):
+def view_teacher_now(teacher, dt):
 	validate_teacher(teacher) #! teacher list should be in SHINYANG[this_year]
-	if datetime.weekday() >= 5:
+	if dt.weekday() >= 5:
 		return error('weekend')
-	if datetime.time() < datetime.time(9,15):
-		message = late_night_message(datetime)
+	if dt.time() < datetime.time(9,15):
+		message = late_night_message(dt)
 		return random.choice(message)
-	rows = TimeTable.objects.filter(teacher__contains=teacher, date=datetime)
+	rows = TimeTable.objects.filter(teacher__contains=teacher, date=dt)
 	if rows.count() == 0:
-		return error('no_class_today_teacher', now=datetime, teacher=teacher)
+		return error('no_class_today_teacher', now=dt, teacher=teacher)
 	else:
 		# 오늘 수업이 있긴 함
 		try:
-			row = rows.filter(start__lt=datetime).order_by("-period")[0]
-			name = "{}\n{}({}교시):\n{}".format(format_date(datetime), row.teacher, row.period, period_time(row))
+			row = rows.filter(start__lt=dt).order_by("-period")[0]
+			name = "{}\n{}({}교시):\n{}".format(format_date(dt), row.teacher, row.period, period_time(row))
 			teachingDivision = "{}학년 {}반 {}".format(row.grade, row.division, row.subject)
 
-			if datetime.time() > row.end:
+			if dt.time() > row.end:
 				message = error('no_class_now')
 				name = "{}\n{}".format(message, name)
 			return "{}\n{}".format(name,teachingDivision)
 		except:
 			period = rows.order_by("period")[0].period
-			return error('not_yet', now=datetime, teacher=teacher, period=period)
+			return error('not_yet', now=dt, teacher=teacher, period=period)
 
 
 def view_class(target, options):
-	datetime = options['datetime']
+	dt = options['datetime']
 	grade, division = [int(elem.strip()) for elem in target.split('-')]
 	if options["now"]:
-		return view_class_now(grade, division, datetime)
+		return view_class_now(grade, division, dt)
 	else:
-		return view_class_weekday(grade, division, datetime)
+		return view_class_weekday(grade, division, dt)
 
 def view_teacher(target, options):
-	datetime = options['datetime']
+	dt = options['datetime']
 	if options["now"]:
-		return view_teacher_now(target, datetime)
+		return view_teacher_now(target, dt)
 	else:
-		return view_teacher_weekday(target, datetime)
+		return view_teacher_weekday(target, dt)
 
 
 @csrf_exempt
