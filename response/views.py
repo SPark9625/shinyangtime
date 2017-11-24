@@ -1,5 +1,3 @@
-# 해야할 일:
-# 시정표 변경 인터페이스: 해당 요일 기본 시간표를 해당 날짜로 복사하는 함수. => 날짜를 입력하면 해당 날짜의 시정표가 준대로 변경.
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
@@ -34,8 +32,6 @@ def view_class_weekday(grade, division, dt):
 	l = [class_period(row.period, row.subject, row.teacher) for row in rows]
 	message = '\n'.join(l)
 	return '\n'.join([title, message])
-		
-
 
 def view_teacher_weekday(teacher, dt):
 	validate_teacher(teacher) #! teacher list should be in SHINYANG[this_year]
@@ -54,7 +50,6 @@ def view_teacher_weekday(teacher, dt):
 	message = '\n'.join(rows)
 	title = "{}\n{}({}요일):".format(teacher, format_date(dt), wd)
 	return "\n".join([title,message])
-
 
 def view_class_now(grade, division, dt):
 	if dt.weekday() >= 5:
@@ -123,6 +118,7 @@ def answer(request):
 		input_json = json.loads(input_request)
 		content = input_json["content"].strip()
 	except:
+                q_option = None
 		text = error(404)
 
 	# message processed
@@ -196,7 +192,8 @@ def answer(request):
 			except:
 				text = error('wrong_input')
 	finally:
-		Query.objects.create(**q_option)
+                if q_option != None:
+                	Query.objects.create(**q_option)
 		return JsonResponse({"message": {"text": text}})
 
 
