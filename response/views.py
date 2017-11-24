@@ -218,8 +218,8 @@ def answer(request):
             except:
                 text = error('wrong_input')
     finally:
-	    if q_option != None:
-	        Query.objects.create(**q_option)
+        if q_option != None:
+            Query.objects.create(**q_option)
         return JsonResponse({"message": {"text": text}})
 
 
