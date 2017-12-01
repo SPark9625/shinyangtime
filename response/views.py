@@ -130,6 +130,8 @@ def view_teacher(target, options):
 @csrf_exempt
 def answer(request):
     now = datetime.datetime.now()
+    if now.day < 6:
+        return JsonResponse({"message": {"text": "12월 4,5일은 담당자휴가로 인해 서비스를 제공하지 않습니다. 이용에 불편을 드려 죄송합니다."}})
     try:
         input_request = request.body.decode("utf-8")
         input_json = json.loads(input_request)
