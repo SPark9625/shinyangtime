@@ -44,7 +44,7 @@ class TimeTable(models.Model):
 
 
 	def __str__(self):
-		return "{}요일 {}학년 {}반 {}교시 {}".format(self.weekday, self.grade, self.division, self.period, self.subject)
+		return "{} {} {}학년 {}반 {}교시 {}".format(self.date.strftime("%Y-%m-%d"), self.weekday, self.grade, self.division, self.period, self.subject)
 
 @receiver(pre_save, sender=TimeTable)
 def my_handler(sender, instance, **kwargs):
