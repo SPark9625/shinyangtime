@@ -66,7 +66,7 @@ class Custom:
 		save(instance, start_end_list)
 
 	def type5(instance):
-				start_end_list = [
+		start_end_list = [
 					("09:15", "09:55"),  # 40m
 					("10:05", "10:45"),  # 40m
 					("10:55", "11:35"),  # 40m
