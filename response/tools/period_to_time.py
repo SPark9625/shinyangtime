@@ -3,6 +3,10 @@ def save(instance, start_end_list):
 	instance.start, instance.end = start_end_list[p]
 	instance.save()
 
+def update(instances, fn):
+	for instance in instances:
+		fn(instance)
+
 class Base:
 	def base(instance):
 		start_end_list = [
