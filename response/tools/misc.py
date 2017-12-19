@@ -32,6 +32,8 @@ def period_time(inst):
 	return "{}:{}~{}:{}".format(sh, sm, eh, em)
 
 def format_date(now):
+	if not now:
+		return now
 	return "{}월 {}일".format(now.month, now.day)
 
 
