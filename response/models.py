@@ -68,4 +68,3 @@ class Query(models.Model):
 	def __str__(self):
 		return "{} {} {}, 날짜시간: {}".format(str(self.teacher), str(self.grade_division), str(self.option), self.date.strftime("%Y년 %m월 %d일 %H:%M"))
 
-
