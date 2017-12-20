@@ -1,6 +1,6 @@
 # Shinyangtime
 
-I used [django](https://www.djangoproject.com/) and [Kakao's API](https://github.com/plusfriend/auto_reply) to let teachers in Shinyang middle school view timetable (or a crop of it) through Kakaotalk.
+I used [django](https://www.djangoproject.com/) and [Kakao's API](https://github.com/plusfriend/auto_reply) to let teachers in Shinyang middle school view the school's timetable (or a crop of it) through Kakaotalk.
 
 The whole process consists of three steps:
 1. User queries(Kakaotalk msgs) => Server
