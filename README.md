@@ -7,7 +7,7 @@ The whole process consists of three steps:
 2. Query processing
 3. Server => User window(Kakaotalk msgs)
 
-Kakao's API takes care of 1 and 3, and this codebase is essentially just for the second step.
+Kakao's API takes care of steps 1 and 3, and this codebase is essentially just for the second step.
 
 Below is an example of this actually being used in Kakaotalk.
 
