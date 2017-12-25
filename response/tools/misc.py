@@ -41,17 +41,21 @@ def no_class_now():
 	return "지금은 수업중이 아닙니다.\n<최근 수업>"
 
 def error(code, teacher=None, now=None, period=None):
-	error_template = {
-		404: "Wrong path. 잘못된 접근입니다.",
-		"wrong_input": "입력 형식이 올바르지 않습니다.\n검색 방법을 보시려면 '도움말'을 입력해주세요.",
-		"no_class_today": "{}\n오늘은 수업이 없습니다.".format(format_date(now)),
-		"no_class_now": "지금은 수업중이 아닙니다.\n<최근 수업>",
-		"no_class_today_teacher": "{}\n{} 선생님은 오늘 수업이 없습니다.".format(format_date(now), teacher),
-		"weekend": "주말에는 지원하지 않는 서비스입니다.",
-		"not_yet": "{}\n오늘 {}선생님의 첫 수업은 {}교시부터입니다.".format(format_date(now), teacher, period)
-	}
-
-	return error_template[code]
+	if code == 404:
+		text = 'Wrong path. 잘못된 접근입니다.'
+	elif code == 'wrong_input':
+		text = '입력 형식이 올바르지 않습니다.\n검색 방법을 보시려면 \'도움말\'을 입력해주세요.'
+	elif code == 'no_class_today':
+		text = '{}\n오늘은 수업이 없습니다.'.format(format_date(now))
+	elif code == 'no_class_now':
+		text = '지금은 수업중이 아닙니다.\n<최근 수업>'
+	elif code == 'no_class_today_teacher':
+		text = '{}\n{} 선생님은 오늘 수업이 없습니다.'.format(format_date(now), teacher)
+	elif code == 'weekend':
+		text = '주말에는 지원하지 않는 서비스입니다.'
+	elif code == 'not_yet':
+		text = '{}\n오늘 {}선생님의 첫 수업은 {}교시부터입니다.'.format(format_date(now), teacher, period)
+	return text
 
 def message_title(type, grade=None, division=None, teacher=None, date=None):
 	pass
