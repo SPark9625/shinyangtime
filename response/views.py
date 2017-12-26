@@ -23,7 +23,19 @@ def helper():
         text = f.read()
     return text
 
-def view_period_time_wrapper(content):
+def view_period_time(dt):
+    tmp = TimeTable.objects.filter(date=dt).first()
+    if not tmp:
+        return error('no_class_today', now=dt)
+    grade, division = tmp.grade, tmp.division
+    rows = TimeTable.objects.filter(
+        date=dt, grade=grade, division=division).order_by('period')
+    m = '시정표({}):'.format(format_date(dt))
+    for row in rows:
+        m += ('\n{}교시 '.format(row.period) + period_time(row))
+    return m
+
+def view_period_time_wrapper(content, now):
     contents = [c.strip() for c in content.split()]
     if len(contents) == 1:
         text = view_period_time(now)
@@ -158,7 +170,7 @@ def answer(request):
         if content in quick_options.keys():
             text = quick_options[content]
         elif '시정표' in content:
-            text = view_period_time_wrapper(content)
+            text = view_period_time_wrapper(content, now)
         else:
             try:
                 # determine if an option exists
@@ -184,16 +196,3 @@ def answer(request):
     finally:
         Query.objects.create(option=q_option.get('option', '-'))
         return JsonResponse({'message': {'text': text}})
-
-
-def view_period_time(dt):
-    tmp = TimeTable.objects.filter(date=dt).first()
-    if not tmp:
-        return error('no_class_today', now=dt)
-    grade, division = tmp.grade, tmp.division
-    rows = TimeTable.objects.filter(
-        date=dt, grade=grade, division=division).order_by('period')
-    m = '시정표({}):'.format(format_date(dt))
-    for row in rows:
-        m += ('\n{}교시 '.format(row.period) + period_time(row))
-    return m
