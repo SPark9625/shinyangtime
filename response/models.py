@@ -56,7 +56,7 @@ def my_handler(sender, instance, **kwargs):
 		else:
 			instance.semester = 2
 	if not (instance.start and instance.end):
-		instance.start, instance.end = Base.start_end(instance)
+		Base.base(instance)
 
 
 class Query(models.Model):
