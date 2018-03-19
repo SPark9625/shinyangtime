@@ -16,7 +16,7 @@ class TimeTable(models.Model):
 
 	WEEKDAY_LIST = ["월", "화", "수", "목", "금"]
 	WEEKDAY_CHOICES = zip(WEEKDAY_LIST, WEEKDAY_LIST)
-	SUBJECT_LIST = sorted('국어 수학 사회 과학 기가 영어 창체 민주 음악 미술 체육 스포츠 진로 예체 도덕 한문 역사 동아')
+	SUBJECT_LIST = sorted('국어 수학 사회 과학 기가 영어 창체 민주 음악 미술 체육 스포츠 진로 예체 도덕 한문 역사 동아'.split())
 	SUBJECT_CHOICES = zip(SUBJECT_LIST, SUBJECT_LIST)
 	PERIOD_CHOICES = zip([1,2,3,4,5,6,7],[1,2,3,4,5,6,7])
 	GRADE_CHOICES = zip([1,2,3],[1,2,3])
