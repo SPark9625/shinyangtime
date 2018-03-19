@@ -4,7 +4,7 @@ from response import models
 class TimeTableAdmin(admin.ModelAdmin):
 	list_filter = ["default","modified","year","semester","date","grade","division"]
 	fieldsets = [
-		(None, 				{"fields": ["modified"]}), #default 시간표 넣은 후 복구
+		(None, 				{"fields": ['default', "modified"]}), #default 시간표 넣은 후 복구
 		
 		# ("Year/Semester", 	{"fields": ["year", "semester"]}),
 		("Period related", 	{"fields": ["date", "period"]}),
