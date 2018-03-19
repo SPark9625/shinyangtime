@@ -40,8 +40,8 @@ class TimeTable(models.Model):
 	period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES, verbose_name="교시", default=1)
 	subject = models.CharField(max_length=30, choices=SUBJECT_CHOICES, verbose_name="과목")
 	teacher = models.CharField(max_length=30, verbose_name="선생님", choices=TEACHER_CHOICES)
-	grade = models.PositiveSmallIntegerField(choices=GRADE_CHOICES, verbose_name="학년", default=3)
-	division = models.PositiveSmallIntegerField(choices=DIVISION_CHOICES, verbose_name="반", default=3)
+	grade = models.PositiveSmallIntegerField(choices=GRADE_CHOICES, verbose_name="학년", default=1)
+	division = models.PositiveSmallIntegerField(choices=DIVISION_CHOICES, verbose_name="반", default=1)
 
 	# auto
 	start = models.TimeField(verbose_name="시작시간", null=True, blank=True)
