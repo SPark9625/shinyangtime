@@ -22,8 +22,8 @@ class TimeTable(models.Model):
 	GRADE_CHOICES = zip([1,2,3],[1,2,3])
 	DIVISION_CHOICES = zip([1,2,3],[1,2,3])
 
-	TEACHER_LIST = sorted(["장현선","김한나","현미숙","이경희","장윤일","정성진","김미경","최춘호","임성오","강학주","오인애","배근아","조은숙","유세정","김준영","도레미","김지인","송유경","조은희","조진향","이득효"])
-	TEACHER_CHOICES = zip(TEACHER_LIST, TEACHER_LIST)
+	TEACHER_LIST = '장현선 김한나 장윤일 현미숙 김미경 정성진 전청 김세열 이주호 박희연 배근아 임성오 유세정 조명희 이선숙 이경희 권지은 최미정 이득효 강유경'.split()
+	TEACHER_CHOICES = list(zip(TEACHER_LIST, range(1, 21)))
 
 	LOCATION_LIST = ["---1층---", "시청각실", "농구장", "운동장", "---2층---", "기술가정실", "컴퓨터실", "과학실1", "강당", "우정반", "---3층---", "3-1", "3-2", "3-3", "도서실", "인사랑1", "인사랑2", "인사랑3", "---4층---", "2-1", "2-2", "2-3", "동아리실1", "동아리실2", "Wee 클래스", "과학실2", "English Studio", "---5층---", "1-1", "1-2", "미술실", "음악실", "수사랑1", "수사랑2", "역사랑", "진로상담실", "--알수없음--"]
 	CLASSROOM_CHOICES = zip(LOCATION_LIST, LOCATION_LIST)
