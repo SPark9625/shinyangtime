@@ -26,7 +26,7 @@ def base_cell_copy(grade, division, date, period):
 	Creates a new cell at the given date and prints it.
 	Doesn't return anything"""
 	if isinstance(date, str):
-			date = datetime.datetime.strptime(date, "%Y-%m-%d")
+		date = datetime.datetime.strptime(date, "%Y-%m-%d")
 	try:
 		t = TimeTable.objects.get(default=False, grade=grade, division=division, date=date, period=period)
 		print(t, "overwrite not possible.")
