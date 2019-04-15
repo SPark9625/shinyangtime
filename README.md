@@ -1,3 +1,6 @@
+# Note
+I don't provide this service anymore. This is an archived repository.
+
 # Shinyangtime
 
 I used [django](https://www.djangoproject.com/) and [Kakao's API](https://github.com/plusfriend/auto_reply) to let teachers in Shinyang middle school to see their timetable through querying in Kakaotalk.
